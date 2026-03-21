@@ -1,16 +1,15 @@
 <template>
   <div>
-    <h1>test</h1>
-    <el-button
-      type="primary"
-      icon="edit"
-      size="default"
-      circle
-      @click="1"
-    ></el-button>
+    <h1>scss测试</h1>
   </div>
 </template>
 
 <script lang="ts" setup></script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+div {
+  h1 {
+    color: $color;
+  }
+}
+</style>
