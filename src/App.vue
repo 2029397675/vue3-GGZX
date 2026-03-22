@@ -5,13 +5,13 @@
 </template>
 
 <script lang="ts" setup>
-import axios from 'axios'
+import request from '@/utils/request'
 import { onMounted } from 'vue'
 
 onMounted(async () => {
-  const res = await axios.post('/api/user/login', {
+  const res = await request.post('/user/login', {
     username: 'admin',
-    password: '1121111'
+    password: '111111'
   })
   console.log(res)
 })
