@@ -1,26 +1,19 @@
 <template>
   <div>
-    <h1>scss测试</h1>
+    <h1>app根组件</h1>
   </div>
 </template>
 
 <script lang="ts" setup>
-import request from '@/utils/request'
 import { onMounted } from 'vue'
+import { reqLogin } from './api/user'
 
-onMounted(async () => {
-  const res = await request.post('/user/login', {
+onMounted(() => {
+  reqLogin({
     username: 'admin',
     password: '111111'
   })
-  console.log(res)
 })
 </script>
 
-<style lang="scss">
-div {
-  h1 {
-    color: $color;
-  }
-}
-</style>
+<style lang="scss"></style>
