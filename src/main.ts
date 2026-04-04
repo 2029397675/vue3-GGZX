@@ -5,6 +5,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import '@/styles/index.scss'
 import App from './App.vue'
+import router from './router'
 //svg插件
 import 'virtual:svg-icons-register'
 
@@ -19,5 +20,5 @@ app.use(ElementPlus, {
 //引入自定义插件对象:注册整个项目全局组件
 import gloalComponents from '@/components/index.ts'
 app.use(gloalComponents)
-
+app.use(router)
 app.mount('#app')
