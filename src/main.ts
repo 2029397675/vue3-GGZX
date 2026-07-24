@@ -6,6 +6,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import '@/styles/index.scss'
 import App from './App.vue'
 import router from './router'
+import pinia from './store'
 //svg插件
 import 'virtual:svg-icons-register'
 
@@ -20,5 +21,8 @@ app.use(ElementPlus, {
 //引入自定义插件对象:注册整个项目全局组件
 import gloalComponents from '@/components/index.ts'
 app.use(gloalComponents)
+//引入pinia
+app.use(pinia)
+//引入路由
 app.use(router)
 app.mount('#app')

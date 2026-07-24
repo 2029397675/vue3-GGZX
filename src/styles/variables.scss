@@ -1,3 +1,20 @@
 //项目提供scss全局变量
 //设置scss全局变量
 $color: red;
+
+//layout页面
+//左侧菜单的宽度
+$base-menu-width: 300px;
+//左侧菜单的背景颜色
+$base-menu-bgcolor: #001529;
+//左侧菜单的logo的高度
+$base-menu-logo-height: 50px;
+//左侧菜单的logo右侧文字大小
+$base-menu-logo-title-fontSize: 24px;
+
+//顶部导航区的高度
+$base-tabbar-height: 80px;
+//顶部导航区的背景颜色
+$base-tabbar-bgcolor: #ffffff;
+
+//内容区
