@@ -8,17 +8,8 @@
       <el-scrollbar class="scrollbar">
         <!-- 菜单组件 -->
         <el-menu background-color="$base-menu-bgcolor" text-color="#fff">
-          <el-menu-item index="1">首页</el-menu-item>
-          <el-menu-item index="2">数据大屏</el-menu-item>
-          <!-- 折叠菜单 -->
-          <el-sub-menu index="3">
-            <template #title>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="2-1">用户管理</el-menu-item>
-            <el-menu-item index="2-2">角色管理</el-menu-item>
-            <el-menu-item index="2-3">菜单管理</el-menu-item>
-          </el-sub-menu>
+          <!-- 根据路由动态生成菜单 -->
+          <Menu :menu-list="userStore.menuRoutes"></Menu>
         </el-menu>
       </el-scrollbar>
     </div>
@@ -26,15 +17,22 @@
     <div class="layout_tabbar">456</div>
     <!-- 内容展示区 -->
     <div class="layout_main">
-      789
-      <p style="height: 10000px">12312</p>
+      <Main></Main>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+//引入右侧内容展示区组件
+import Main from './main/index.vue'
+
 //引入左侧菜单logo子组件
 import Logo from './logo/index.vue'
+//引入左侧菜单动态菜单子组件
+import Menu from './menu/index.vue'
+//获取用户相关的小仓库
+import useUserStore from '@/store/modules/user'
+const userStore = useUserStore()
 </script>
 
 <style lang="scss" scoped>
@@ -50,6 +48,9 @@ import Logo from './logo/index.vue'
     .scrollbar {
       width: 100%;
       height: calc(100vh - $base-menu-logo-height);
+      .el-menu {
+        border-right: none;
+      }
     }
   }
   .layout_tabbar {
