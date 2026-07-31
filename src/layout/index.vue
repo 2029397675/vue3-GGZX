@@ -1,7 +1,7 @@
 <template>
   <div class="layout_container">
     <!-- 左侧菜单 -->
-    <div class="layout_slider">
+    <div class="layout_slider" :class="{ fold: layoutSettingStore.fold }">
       <Logo></Logo>
       <!-- 展示菜单 -->
       <!-- 滚动组件 -->
@@ -12,6 +12,7 @@
           text-color="white"
           active-text-color="yellowgreen"
           :default-active="route.path"
+          :collapse="layoutSettingStore.fold"
         >
           <!-- 根据路由动态生成菜单 -->
           <Menu :menu-list="userStore.menuRoutes"></Menu>
@@ -19,12 +20,12 @@
       </el-scrollbar>
     </div>
     <!-- 顶部导航 -->
-    <div class="layout_tabbar">
+    <div class="layout_tabbar" :class="{ fold: layoutSettingStore.fold }">
       <!-- layout组件的顶部导航tabbar -->
       <Tabbar></Tabbar>
     </div>
     <!-- 内容展示区 -->
-    <div class="layout_main">
+    <div class="layout_main" :class="{ fold: layoutSettingStore.fold }">
       <Main></Main>
     </div>
   </div>
@@ -48,6 +49,9 @@ import Tabbar from './tabbar/index.vue'
 //获取用户相关的小仓库
 import useUserStore from '@/store/modules/user'
 const userStore = useUserStore()
+//引入layout配置仓库
+import useLayoutSettingStore from '@/store/modules/setting.ts'
+const layoutSettingStore = useLayoutSettingStore()
 </script>
 
 <style lang="scss" scoped>
@@ -60,12 +64,17 @@ const userStore = useUserStore()
     height: 100%;
     color: white;
     background-color: $base-menu-bgcolor;
+    transition: all 0.3s ease;
+    white-space: nowrap; //防止菜单内容换行
     .scrollbar {
       width: 100%;
       height: calc(100vh - $base-menu-logo-height);
       .el-menu {
         border-right: none;
       }
+    }
+    &.fold {
+      width: $base-menu-min-width;
     }
   }
   .layout_tabbar {
@@ -75,6 +84,11 @@ const userStore = useUserStore()
     width: calc(100% - $base-menu-width);
     height: $base-tabbar-height;
     background-color: $base-tabbar-bgcolor;
+    transition: all 0.3s ease; // 顶部导航栏折叠动画
+    &.fold {
+      width: calc(100% - $base-menu-min-width);
+      left: $base-menu-min-width;
+    }
   }
   .layout_main {
     position: absolute;
@@ -85,6 +99,11 @@ const userStore = useUserStore()
     background-color: #2aa27c;
     padding: 20px;
     overflow: auto; // 滚动条
+    transition: all 0.3s ease;
+    &.fold {
+      width: calc(100% - $base-menu-min-width);
+      left: $base-menu-min-width;
+    }
   }
 }
 </style>
