@@ -16,8 +16,9 @@ export const constantRoute = [
     name: 'layout',
     component: () => import('@/layout/index.vue'),
     meta: {
-      title: 'layout', //菜单需要的标题
-      hidden: false
+      title: '', //菜单需要的标题
+      hidden: false,
+      icon: 'AvatarFilled' //菜单需要的图标
     },
     redirect: '/home', //重定向到home页面
     children: [
@@ -47,6 +48,7 @@ export const constantRoute = [
     path: '/acl',
     component: () => import('@/layout/index.vue'),
     name: 'Acl', //命名路由
+    redirect: '/acl/user', //重定向到user页面
     meta: {
       title: '权限管理', //菜单需要的标题
       hidden: false,
@@ -89,6 +91,7 @@ export const constantRoute = [
     path: '/product',
     component: () => import('@/layout/index.vue'),
     name: 'Product', //命名路由
+    redirect: '/product/trademark', //重定向到trademark页面
     meta: {
       title: '商品管理', //菜单需要的标题
       hidden: false,
