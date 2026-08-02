@@ -1,6 +1,6 @@
 <template>
   <!-- 顶部右侧动态 -->
-  <el-button plain icon="Refresh" circle></el-button>
+  <el-button plain icon="Refresh" circle @click="updateRefresj"></el-button>
   <el-button plain icon="FullScreen" circle></el-button>
   <el-button plain icon="Setting" circle></el-button>
   <img
@@ -24,6 +24,15 @@
 </template>
 
 +
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+//获取layout设置的小仓库
+import useLayOutSettingStore from '@/store/modules/setting'
+
+const layoutSettingStore = useLayOutSettingStore()
+//更新刷新状态
+const updateRefresj = () => {
+  layoutSettingStore.refresh = !layoutSettingStore.refresh
+}
+</script>
 
 <style lang="scss" scoped></style>

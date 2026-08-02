@@ -4,8 +4,10 @@ import { ref } from 'vue'
 
 const useLayoutSettingStore = defineStore('SettingStore', () => {
   const fold = ref(false) //是否折叠菜单
+  const refresh = ref(false) //是否刷新页面
   return {
-    fold
+    fold,
+    refresh
   }
 })
 export default useLayoutSettingStore
