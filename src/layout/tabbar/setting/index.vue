@@ -1,7 +1,7 @@
 <template>
   <!-- 顶部右侧动态 -->
   <el-button plain icon="Refresh" circle @click="updateRefresj"></el-button>
-  <el-button plain icon="FullScreen" circle></el-button>
+  <el-button plain icon="FullScreen" circle @click="fullScreen"></el-button>
   <el-button plain icon="Setting" circle></el-button>
   <img
     src="../../../../public/logo.png"
@@ -32,6 +32,14 @@ const layoutSettingStore = useLayOutSettingStore()
 //更新刷新状态
 const updateRefresj = () => {
   layoutSettingStore.refresh = !layoutSettingStore.refresh
+}
+//全屏按钮
+const fullScreen = () => {
+  if (document.fullscreenElement) {
+    document.exitFullscreen()
+  } else {
+    document.documentElement.requestFullscreen()
+  }
 }
 </script>
 
