@@ -47,7 +47,7 @@
 <script lang="ts" setup>
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { ElNotification } from 'element-plus'
 import useUserStore from '@/store/modules/user.ts'
 import { getTime } from '@/utils/time'
@@ -57,6 +57,8 @@ const loginForms = ref()
 const userStore = useUserStore()
 //获取路由器
 const router = useRouter()
+//获取路由对象
+const route = useRoute()
 const loginForm = reactive({
   username: 'admin',
   password: '111111'
@@ -77,8 +79,8 @@ const login = async () => {
     loading.value = false
     //保证登录成功
     await userStore.userLogin(loginForm)
-    //编程式导航跳转到展示数据的首页
-    router.push('/')
+    // 如果有路由参数，跳转到对应的路由参数路径
+    router.push({ path: (route.query.redirect as string) || '/' })
     ElNotification({
       type: 'success',
       message: '欢迎回来',

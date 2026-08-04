@@ -1,6 +1,9 @@
 //进行axios二次封装:使用请求与封装拦截器
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+//引入用户相关的仓库
+import useUserStore from '@/store/modules/user'
+
 const request = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API, //基础路径上会携带/api
   timeout: 5000,
@@ -10,6 +13,9 @@ const request = axios.create({
 request.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
+    const userStore = useUserStore()
+    if (userStore.token) config.headers.token = userStore.token
+
     return config
   },
   function (error) {
