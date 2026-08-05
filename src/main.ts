@@ -25,4 +25,7 @@ app.use(gloalComponents)
 app.use(pinia)
 //引入路由
 app.use(router)
+//引入路由鉴权
+import '@/permission.ts'
+//挂载到app上
 app.mount('#app')
