@@ -33,6 +33,8 @@ const useUserStore = defineStore('User', () => {
       username.value = res.data.checkUser.username
       avatar.value = res.data.checkUser.avatar
       return 'ok'
+    } else {
+      return Promise.reject('获取用户信息失败！') //返回错误信息
     }
   }
   //退出登录
