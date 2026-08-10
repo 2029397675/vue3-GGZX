@@ -49,8 +49,9 @@ const fullScreen = () => {
   }
 }
 //退出登录
-const logout = () => {
-  userStore.userLogout()
+const logout = async () => {
+  await userStore.userLogout()
+  //跳转到登录页面
   router.push({ path: '/login', query: { redirect: route.path } }) //跳转到登录页面
 }
 </script>

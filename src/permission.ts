@@ -32,7 +32,7 @@ router.beforeEach(async (to, from) => {
         } catch (error) {
           //token过期：获取不到用户信息
           //用户手动修改本地token，导致token失效
-          userStore.userLogout() //清除token
+          await userStore.userLogout() //清除token
           return { path: '/login', query: { redirect: to.path } }
         }
       }
