@@ -2,7 +2,12 @@
 import { defineStore } from 'pinia'
 //引入接口
 import { reqLogin, reqUserInfo, reqLogout } from '@/api/user/index.ts'
-
+//引入接口类型
+import type {
+  loginFormData,
+  ResponseData,
+  UserInfoResponseData
+} from '@/api/user/type'
 //引入路由（常态路由）
 import { constantRoute } from '@/router/routes'
 
@@ -13,12 +18,11 @@ const useUserStore = defineStore('User', () => {
   //token：用户登录后返回的token
   const token = ref(localStorage.getItem('TOKEN') || '')
   //用户登陆方法
-  const userLogin = async (data: any) => {
-    const res: any = await reqLogin(data)
+  const userLogin = async (data: loginFormData) => {
+    const res: ResponseData<string> = await reqLogin(data)
     if (res.code === 200) {
       //将token存储到仓库中
-      token.value = res.data.token as string
-      token.value = res.data as string
+      token.value = res.data
       localStorage.setItem('TOKEN', token.value)
       return 'ok'
     } else {
@@ -30,19 +34,19 @@ const useUserStore = defineStore('User', () => {
   const avatar = ref('') //用户头像
   const userInfo = async () => {
     //获取用户信息并存储到仓库中【用户头像、名字】
-    const res = await reqUserInfo()
+    const res: ResponseData<UserInfoResponseData> = await reqUserInfo()
     if (res.code === 200) {
       //将用户信息存储到仓库中【用户头像、名字】
       username.value = res.data.name
       avatar.value = res.data.avatar
       return 'ok'
     } else {
-      return Promise.reject(new Error(res.data.message)) //返回错误信息
+      return Promise.reject(new Error(res.message)) //返回错误信息
     }
   }
   //退出登录
   const userLogout = async () => {
-    const res = await reqLogout() //调用退出登录接口
+    const res: any = await reqLogout() //调用退出登录接口
     if (res.code === 200) {
       token.value = ''
       localStorage.removeItem('TOKEN')
