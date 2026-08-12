@@ -58,7 +58,6 @@ const layoutSettingStore = useLayoutSettingStore()
 .layout_container {
   width: 100%;
   height: 100vh;
-  background-color: #3d3da8;
   .layout_slider {
     width: $base-menu-width;
     height: 100%;
@@ -96,7 +95,6 @@ const layoutSettingStore = useLayoutSettingStore()
     top: $base-tabbar-height;
     width: calc(100% - $base-menu-width);
     height: calc(100% - $base-tabbar-height);
-    background-color: #2aa27c;
     padding: 20px;
     overflow: auto; // 滚动条
     transition: all 0.3s ease;
