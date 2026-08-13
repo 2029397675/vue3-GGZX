@@ -39,6 +39,7 @@
       :background="true"
       layout=" prev, pager, next, jumper,->,sizes,total"
       :total="total"
+      @change="getHasTrademark"
     />
   </el-card>
 </template>
@@ -58,7 +59,6 @@ const trademarkArr = ref([])
 // 请求品牌数据
 const getHasTrademark = async () => {
   const res = await reqHasTrademark(pageNo.value, limit.value)
-  console.log(res) // 打印品牌数据
   if (res.code === 200) {
     total.value = res.data.total // 设置品牌数据总数
     trademarkArr.value = res.data.records
