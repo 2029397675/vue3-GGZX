@@ -34,12 +34,17 @@
               icon="Edit"
               @click="updateTrademark(row)"
             ></el-button>
-            <el-button
-              type="danger"
-              size="small"
+            <el-popconfirm
+              width="250px"
               icon="Delete"
-              @click="deleteTrademark"
-            ></el-button>
+              icon-color="red"
+              :title="`您确定要删除${row.tmName}吗？`"
+              @confirm="deleteTrademark(row.id)"
+            >
+              <template #reference>
+                <el-button type="danger" size="small" icon="Delete"></el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -109,7 +114,8 @@ import type { Trademark } from '@/api/product/trademark/type'
 import { ElMessage } from 'element-plus'
 import {
   reqHasTrademark,
-  reqAddOrUpdateTrademark
+  reqAddOrUpdateTrademark,
+  reqDeleteTrademark
 } from '@/api/product/trademark'
 import type { TrademarkRequestParams } from '@/api/product/trademark/type'
 
@@ -162,8 +168,20 @@ const updateTrademark = (data: Trademark) => {
   dialogFormVisible.value = true
 }
 // 删除品牌按钮的点击事件
-const deleteTrademark = () => {
-  dialogFormVisible.value = true
+const deleteTrademark = async (id: number) => {
+  const res = await reqDeleteTrademark(id)
+  if (res.code === 200) {
+    ElMessage({
+      type: 'success',
+      message: '删除成功'
+    })
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '删除失败'
+    })
+  }
+  getHasTrademark()
 }
 // 对话框取消按钮的点击事件
 const cancel = () => {
