@@ -32,7 +32,7 @@
               type="primary"
               size="small"
               icon="Edit"
-              @click="updateTrademark"
+              @click="updateTrademark(row)"
             ></el-button>
             <el-button
               type="danger"
@@ -56,21 +56,34 @@
       />
     </el-card>
     <!-- 对话框组件 -->
-    <el-dialog v-model="dialogFormVisible" title="添加品牌" width="500">
+    <el-dialog
+      v-model="dialogFormVisible"
+      :title="trademarkParams.id ? '编辑品牌' : '添加品牌'"
+      width="500"
+    >
       <!-- 表单组件：用于进行添加或更新品牌 -->
       <el-form style="width: 80%">
         <el-form-item label="品牌名称" label-width="80px">
-          <el-input placeholder="请您输入品牌名称"></el-input>
+          <el-input
+            v-model="trademarkParams.tmName"
+            placeholder="请您输入品牌名称"
+          ></el-input>
         </el-form-item>
         <el-form-item label="品牌LOGO" label-width="80px">
+          <!-- upload组件 -->
           <el-upload
             class="avatar-uploader"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+            action="/api/admin/product/fileUpload"
+            :headers="uploadHeaders"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <img
+              v-if="trademarkParams.logoUrl"
+              :src="trademarkParams.logoUrl"
+              class="avatar"
+            />
             <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </el-form-item>
@@ -85,8 +98,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import { reqHasTrademark } from '@/api/product/trademark'
+import { ref, onMounted, reactive } from 'vue'
+import type { UploadProps } from 'element-plus'
+import type { Trademark } from '@/api/product/trademark/type'
+import { ElMessage } from 'element-plus'
+import {
+  reqHasTrademark,
+  reqAddOrUpdateTrademark
+} from '@/api/product/trademark'
+import type { TrademarkRequestParams } from '@/api/product/trademark/type'
+import { pa, tr } from 'element-plus/es/locale/index.mjs'
 // 分页组件的参数
 //1. 当前页码
 const pageNo = ref<number>(1)
@@ -112,12 +133,23 @@ onMounted(() => {
 // 对话框组件的参数
 //1. 对话框是否显示
 const dialogFormVisible = ref<boolean>(false)
+// 收集新增品牌数据
+const trademarkParams = reactive<TrademarkRequestParams>({
+  tmName: '',
+  logoUrl: ''
+})
 // 添加品牌按钮的点击事件
 const addTrademark = () => {
+  trademarkParams.id = undefined
+  trademarkParams.tmName = ''
+  trademarkParams.logoUrl = ''
   dialogFormVisible.value = true
 }
 // 更新品牌按钮的点击事件
-const updateTrademark = () => {
+const updateTrademark = (data: Trademark) => {
+  trademarkParams.tmName = data.tmName
+  trademarkParams.logoUrl = data.logoUrl
+  trademarkParams.id = data.id
   dialogFormVisible.value = true
 }
 // 删除品牌按钮的点击事件
@@ -129,8 +161,52 @@ const cancel = () => {
   dialogFormVisible.value = false
 }
 // 对话框确认按钮的点击事件
-const confirm = () => {
-  dialogFormVisible.value = false
+const confirm = async () => {
+  const res = await reqAddOrUpdateTrademark(trademarkParams)
+  if (res.code === 200) {
+    ElMessage({
+      type: 'success',
+      message: trademarkParams.id ? '编辑成功' : '添加成功'
+    })
+    dialogFormVisible.value = false
+    pageNo.value = trademarkParams.id ? pageNo.value : 1
+    getHasTrademark()
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '添加失败'
+    })
+    dialogFormVisible.value = false
+  }
+}
+
+//上传文件所需要的请求标头
+const uploadHeaders = {
+  token: localStorage.getItem('TOKEN') || ''
+}
+//上传文件前的处理函数
+const beforeAvatarUpload: UploadProps['beforeUpload'] = rawFile => {
+  if (rawFile.type == 'image/jpeg' || rawFile.type == 'image/png') {
+    if (rawFile.size / 1024 / 1024 < 10) {
+      return true
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '上传的文件过大'
+      })
+      return false
+    }
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '上传的图片格式不正确'
+    })
+    return false
+  }
+}
+//上传成功的处理函数
+const handleAvatarSuccess: UploadProps['onSuccess'] = response => {
+  trademarkParams.logoUrl = response.data
 }
 </script>
 

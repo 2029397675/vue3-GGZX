@@ -17,3 +17,9 @@ export interface TrademarkResponseData {
   size: number
   total: number
 }
+
+export interface TrademarkRequestParams {
+  id?: number
+  tmName: string
+  logoUrl: string
+}
