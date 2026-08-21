@@ -1,5 +1,6 @@
 // 产品属性类型接口
 import request from '@/utils/request'
+import type { CategoryResponseData } from './type'
 
 //属性管理模块地址
 const API = {
@@ -10,7 +11,7 @@ const API = {
 /**
  * 获取一级分类列表
  */
-export const reqC1 = () => request.get<any, any>(API.C1_URL)
+export const reqC1 = () => request.get<any, CategoryResponseData>(API.C1_URL)
 /**
  * 获取二级分类列表
  *
@@ -21,7 +22,7 @@ export const reqC1 = () => request.get<any, any>(API.C1_URL)
  *
  */
 export const reqC2 = (id: number) =>
-  request.get<any, any>(API.C2_URL + `/${id}`)
+  request.get<any, CategoryResponseData>(API.C2_URL + `/${id}`)
 /**
  * 获取三级分类列表
  *
@@ -31,4 +32,4 @@ export const reqC2 = (id: number) =>
  * @param {number} id - 二级分类id
  */
 export const reqC3 = (id: number) =>
-  request.get<any, any>(API.C3_URL + `/${id}`)
+  request.get<any, CategoryResponseData>(API.C3_URL + `/${id}`)

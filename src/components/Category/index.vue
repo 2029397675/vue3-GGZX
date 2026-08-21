@@ -30,7 +30,6 @@
 <script lang="ts" setup>
 import { onMounted } from 'vue'
 import useCategoryStore from '@/store/modules/category'
-import { ca } from 'element-plus/lib/locale/index.js'
 
 const categoryStore = useCategoryStore()
 //分类全局组件挂载完毕，通知仓库发请求获取一级分类的数据
