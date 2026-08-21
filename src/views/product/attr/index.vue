@@ -2,7 +2,9 @@
   <div>
     <Category></Category>
     <el-card style="margin: 20px 0">
-      <el-button type="primary" icon="Plus">添加属性</el-button>
+      <el-button :disabled="!categoryStore.c3Id" type="primary" icon="Plus">
+        添加属性
+      </el-button>
       <el-table border style="margin: 10px 0">
         <el-table-column
           label="序号"
@@ -18,6 +20,9 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import useCategoryStore from '@/store/modules/category'
+const categoryStore = useCategoryStore()
+</script>
 
 <style lang="scss" scoped></style>

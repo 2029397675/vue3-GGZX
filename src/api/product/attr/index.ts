@@ -21,7 +21,7 @@ export const reqC1 = () => request.get<any, CategoryResponseData>(API.C1_URL)
  * @param  {number} id - 一级分类id
  *
  */
-export const reqC2 = (id: number) =>
+export const reqC2 = (id: number | string) =>
   request.get<any, CategoryResponseData>(API.C2_URL + `/${id}`)
 /**
  * 获取三级分类列表
@@ -31,5 +31,5 @@ export const reqC2 = (id: number) =>
  *
  * @param {number} id - 二级分类id
  */
-export const reqC3 = (id: number) =>
+export const reqC3 = (id: number | string) =>
   request.get<any, CategoryResponseData>(API.C3_URL + `/${id}`)
