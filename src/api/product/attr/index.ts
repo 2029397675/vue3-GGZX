@@ -1,12 +1,14 @@
 // 产品属性类型接口
 import request from '@/utils/request'
-import type { CategoryResponseData } from './type'
+import type { CategoryResponseData, AttrResponseData } from './type'
+import { ca } from 'element-plus/es/locale/index.mjs'
 
 //属性管理模块地址
 const API = {
   C1_URL: '/admin/product/getCategory1',
   C2_URL: '/admin/product/getCategory2',
-  C3_URL: '/admin/product/getCategory3'
+  C3_URL: '/admin/product/getCategory3',
+  ATTR_URL: '/admin/product/attrInfoList/'
 }
 /**
  * 获取一级分类列表
@@ -33,3 +35,18 @@ export const reqC2 = (id: number | string) =>
  */
 export const reqC3 = (id: number | string) =>
   request.get<any, CategoryResponseData>(API.C3_URL + `/${id}`)
+/**
+ * @description 获取指定三级分类下的商品属性列表
+ * @param {number | string} category1Id 一级分类 ID
+ * @param {number | string} category2Id 二级分类 ID
+ * @param {number | string} category3Id 三级分类 ID
+ * @returns {Promise<CategoryResponseData>} 商品属性列表数据
+ */
+export const reqAttr = (
+  category1Id: number | string,
+  category2Id: number | string,
+  category3Id: number | string
+) =>
+  request.get<any, AttrResponseData>(
+    API.ATTR_URL + `${category1Id}/${category2Id}/${category3Id}`
+  )
