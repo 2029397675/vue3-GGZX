@@ -6,6 +6,7 @@
           <el-select
             v-model="categoryStore.c1Id"
             placeholder="请选择"
+            :disabled="!!scene"
             @change="handle"
           >
             <el-option
@@ -19,6 +20,7 @@
         <el-form-item label="二级分类">
           <el-select
             v-model="categoryStore.c2Id"
+            :disabled="!!scene"
             placeholder="请选择"
             @change="handleC3"
           >
@@ -31,7 +33,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="三级分类">
-          <el-select v-model="categoryStore.c3Id" placeholder="请选择">
+          <el-select
+            v-model="categoryStore.c3Id"
+            :disabled="!!scene"
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in categoryStore.c3Arr"
               :key="item.id"
@@ -49,6 +55,12 @@
 import { onMounted } from 'vue'
 import useCategoryStore from '@/store/modules/category'
 
+defineProps({
+  scene: {
+    type: Number,
+    default: 1
+  }
+})
 const categoryStore = useCategoryStore()
 //分类全局组件挂载完毕，通知仓库发请求获取一级分类的数据
 //组件挂载后调用接口方法
