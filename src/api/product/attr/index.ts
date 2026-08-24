@@ -1,14 +1,14 @@
 // 产品属性类型接口
 import request from '@/utils/request'
-import type { CategoryResponseData, AttrResponseData } from './type'
-import { ca } from 'element-plus/es/locale/index.mjs'
+import type { CategoryResponseData, AttrResponseData, AttrData } from './type'
 
 //属性管理模块地址
 const API = {
   C1_URL: '/admin/product/getCategory1',
   C2_URL: '/admin/product/getCategory2',
   C3_URL: '/admin/product/getCategory3',
-  ATTR_URL: '/admin/product/attrInfoList/'
+  ATTR_URL: '/admin/product/attrInfoList/',
+  ADDORUPDATE_URL: '/admin/product/saveAttrInfo' //添加或更新用户信息接口
 }
 /**
  * 获取一级分类列表
@@ -50,3 +50,6 @@ export const reqAttr = (
   request.get<any, AttrResponseData>(
     API.ATTR_URL + `${category1Id}/${category2Id}/${category3Id}`
   )
+
+export const reqAddOrUpdateAttr = (data: AttrData) =>
+  request.post<any, any>(API.ADDORUPDATE_URL, data)

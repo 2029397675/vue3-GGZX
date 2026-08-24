@@ -18,14 +18,14 @@ export interface CategoryResponseData extends ResponsData {
 }
 //属性与属性值的ts类型
 export interface AttrValue {
-  id: number
+  id?: number
   valueName: string
-  attrId: number
+  attrId?: number
 }
 export interface AttrData {
-  id: number
+  id?: number
   attrName: string
-  categoryId: number
+  categoryId: number | string
   categoryLevel: number
   attrValueList: AttrValue[]
 }

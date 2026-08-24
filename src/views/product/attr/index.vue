@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref } from 'vue'
+import { watch, ref, reactive } from 'vue'
 import { reqAttr } from '@/api/product/attr'
 import type { AttrResponseData, AttrData } from '@/api/product/attr/type'
 import useCategoryStore from '@/store/modules/category'
@@ -86,6 +86,17 @@ import useCategoryStore from '@/store/modules/category'
 const categoryStore = useCategoryStore()
 const scene = ref<number>(1) //场景
 const attrArr = ref<AttrData[]>([])
+const attrParams = reactive<AttrData>({
+  attrName: '', //新增的属性值名字
+  attrValueList: [
+    //新增的属性值数组
+    // {
+    //   valueName: ''
+    // }
+  ],
+  categoryId: '', //三级分类id
+  categoryLevel: 3 //三级分类级别
+})
 //监听仓库三级分类id的变化
 watch(
   () => categoryStore.c3Id,
