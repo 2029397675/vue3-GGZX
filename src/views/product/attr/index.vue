@@ -77,11 +77,16 @@
             align="center"
           ></el-table-column>
           <el-table-column label="属性值">
-            <template #default="{ row }">
+            <template #default="{ row, index }">
               <el-input
+                v-show="row.flag"
                 v-model="row.valueName"
                 placeholder="请输入属性值名称"
+                @blur="toLook(row, index)"
               ></el-input>
+              <div v-show="!row.flag" @click="toEdit(row)">
+                {{ row.valueName }}
+              </div>
             </template>
           </el-table-column>
           <el-table-column label="操作">
@@ -91,7 +96,13 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary" @click="save">保存</el-button>
+        <el-button
+          type="primary"
+          :disabled="attrParams.attrValueList.length > 0 ? false : true"
+          @click="save"
+        >
+          保存
+        </el-button>
         <el-button @click="cancel">取消</el-button>
       </div>
     </el-card>
@@ -101,7 +112,11 @@
 <script lang="ts" setup>
 import { watch, ref, reactive } from 'vue'
 import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
-import type { AttrResponseData, AttrData } from '@/api/product/attr/type'
+import type {
+  AttrResponseData,
+  AttrData,
+  AttrValue
+} from '@/api/product/attr/type'
 import useCategoryStore from '@/store/modules/category'
 import { ElMessage } from 'element-plus'
 
@@ -119,6 +134,7 @@ const attrParams = reactive<AttrData>({
   categoryId: '', //三级分类id
   categoryLevel: 3 //三级分类级别
 })
+
 //监听仓库三级分类id的变化
 watch(
   () => categoryStore.c3Id,
@@ -174,7 +190,8 @@ const cancel = () => {
 const addAttrValue = () => {
   //点击添加属性值按钮的时候，向属性值数组中添加一个新的属性值对象
   attrParams.attrValueList.push({
-    valueName: '' //属性值名字
+    valueName: '', //属性值名字
+    flag: true //标识符
   })
 }
 //保存按钮方法
@@ -189,6 +206,32 @@ const save = async () => {
   } else {
     ElMessage.error(attrParams.id ? '更新属性失败' : '添加属性失败') //添加|更新属性失败
   }
+}
+//将属性值名称改为可查看状态
+const toLook = (row: AttrValue, index: number) => {
+  //判断属性值名称是否为空
+  if (row.valueName.trim() === '') {
+    //删除掉对应属性值为空的数组
+    attrParams.attrValueList.splice(index, 1)
+    ElMessage.error('属性值名称不能为空') //属性值名称不能为空
+    return
+  }
+  const repeat = attrParams.attrValueList.find(item => {
+    if (item != row) {
+      return item.valueName === row.valueName
+    }
+  })
+  if (repeat) {
+    attrParams.attrValueList.splice(index, 1)
+    ElMessage.error('属性值名称不能重复') //属性值名称不能重复
+    return
+  }
+
+  row.flag = false //将标识符改为不可查看状态
+}
+//将属性值名称改为可编辑状态
+const toEdit = (row: AttrValue) => {
+  row.flag = true //将标识符改为可编辑状态
 }
 </script>
 
