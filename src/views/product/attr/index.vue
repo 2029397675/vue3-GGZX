@@ -77,22 +77,28 @@
             align="center"
           ></el-table-column>
           <el-table-column label="属性值">
-            <template #default="{ row, index }">
+            <template #default="{ row, $index }">
               <el-input
-                v-show="row.flag"
+                v-if="row.flag"
+                :ref="(elInput: any) => (inputArr[$index] = elInput)"
                 v-model="row.valueName"
                 placeholder="请输入属性值名称"
-                @blur="toLook(row, index)"
+                @blur="toLook(row, $index)"
               ></el-input>
-              <div v-show="!row.flag" @click="toEdit(row)">
+              <div v-else @click="toEdit(row, $index)">
                 {{ row.valueName }}
               </div>
             </template>
           </el-table-column>
           <el-table-column label="操作">
-            <template #default="{ row }">
+            <template #default="{ row, $index }">
               <el-button type="warning">编辑</el-button>
-              <el-button type="danger">删除</el-button>
+              <el-button
+                type="danger"
+                @click="attrParams.attrValueList.splice($index, 1)"
+              >
+                删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -110,7 +116,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, reactive } from 'vue'
+import { watch, ref, reactive, nextTick } from 'vue'
 import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
 import type {
   AttrResponseData,
@@ -193,6 +199,10 @@ const addAttrValue = () => {
     valueName: '', //属性值名字
     flag: true //标识符
   })
+  nextTick(() => {
+    //聚焦到对应的组件实例el-input
+    inputArr.value[inputArr.value.length - 1].focus()
+  })
 }
 //保存按钮方法
 const save = async () => {
@@ -230,9 +240,14 @@ const toLook = (row: AttrValue, index: number) => {
   row.flag = false //将标识符改为不可查看状态
 }
 //将属性值名称改为可编辑状态
-const toEdit = (row: AttrValue) => {
+const toEdit = (row: AttrValue, index: number) => {
   row.flag = true //将标识符改为可编辑状态
+  nextTick(() => {
+    inputArr.value[index].focus()
+  })
 }
+//准备一个数组存储对应的组件实例el-input
+const inputArr = ref<any[]>([])
 </script>
 
 <style lang="scss" scoped></style>
