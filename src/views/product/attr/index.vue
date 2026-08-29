@@ -40,7 +40,7 @@
                 type="warning"
                 size="default"
                 icon="Edit"
-                @click="updateAttr"
+                @click="updateAttr(row)"
               ></el-button>
               <el-button type="danger" size="default" icon="Delete"></el-button>
             </template>
@@ -184,8 +184,10 @@ const addAttr = () => {
   scene.value = 1
 }
 //更新属性按钮方法
-const updateAttr = () => {
+const updateAttr = (row: AttrData) => {
   scene.value = 1
+  //将已有的属性对象赋值给属性参数对象(需要进行深拷贝)
+  Object.assign(attrParams, structuredClone(row)) //将已有的属性对象赋值给属性参数对象
 }
 //场景1
 //取消按钮方法
