@@ -42,7 +42,19 @@
                 icon="Edit"
                 @click="updateAttr(row)"
               ></el-button>
-              <el-button type="danger" size="default" icon="Delete"></el-button>
+
+              <el-popconfirm
+                :title="`你确定删除${row.attrName}吗？`"
+                @confirm="deleteAttr(row.id)"
+              >
+                <template #reference>
+                  <el-button
+                    type="danger"
+                    size="default"
+                    icon="Delete"
+                  ></el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -116,8 +128,8 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, reactive, nextTick } from 'vue'
-import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
+import { watch, ref, reactive, nextTick, onBeforeMount } from 'vue'
+import { reqAttr, reqAddOrUpdateAttr, reqRemoveAttr } from '@/api/product/attr'
 import type {
   AttrResponseData,
   AttrData,
@@ -189,6 +201,16 @@ const updateAttr = (row: AttrData) => {
   //将已有的属性对象赋值给属性参数对象(需要进行深拷贝)
   Object.assign(attrParams, structuredClone(row)) //将已有的属性对象赋值给属性参数对象
 }
+//删除属性按钮方法
+const deleteAttr = async (attrId: number) => {
+  const res = await reqRemoveAttr(attrId) //发送请求
+  if (res.code === 200) {
+    ElMessage.success('删除属性成功') //删除属性成功
+    getAttr() //请求属性数据
+  } else {
+    ElMessage.error('删除属性失败') //删除属性失败
+  }
+}
 //场景1
 //取消按钮方法
 const cancel = () => {
@@ -250,6 +272,10 @@ const toEdit = (row: AttrValue, index: number) => {
 }
 //准备一个数组存储对应的组件实例el-input
 const inputArr = ref<any[]>([])
+//路由组件销毁的时候，ba
+onBeforeMount(() => {
+  categoryStore.$reset() //重置仓库数据
+})
 </script>
 
 <style lang="scss" scoped></style>

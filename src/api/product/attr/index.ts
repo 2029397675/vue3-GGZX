@@ -8,7 +8,8 @@ const API = {
   C2_URL: '/admin/product/getCategory2',
   C3_URL: '/admin/product/getCategory3',
   ATTR_URL: '/admin/product/attrInfoList/',
-  ADDORUPDATE_URL: '/admin/product/saveAttrInfo' //添加或更新用户信息接口
+  ADDORUPDATE_URL: '/admin/product/saveAttrInfo', //添加或更新属性信息接口
+  DELETEATTR_URL: '/admin/product/deleteAttr/' //删除属性信息接口
 }
 /**
  * 获取一级分类列表
@@ -53,3 +54,6 @@ export const reqAttr = (
 
 export const reqAddOrUpdateAttr = (data: AttrData) =>
   request.post<any, any>(API.ADDORUPDATE_URL, data)
+
+export const reqRemoveAttr = (attrId: number | string) =>
+  request.delete<any, any>(API.DELETEATTR_URL + `${attrId}`)
