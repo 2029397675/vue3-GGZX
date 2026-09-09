@@ -274,7 +274,7 @@ const toEdit = (row: AttrValue, index: number) => {
 const inputArr = ref<any[]>([])
 //路由组件销毁的时候，ba
 onBeforeMount(() => {
-  categoryStore.$reset() //重置仓库数据
+  //组合式写法没有$reset方法，所以需要手动实现重置
 })
 </script>
 
