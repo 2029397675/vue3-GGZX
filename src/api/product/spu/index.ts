@@ -1,9 +1,23 @@
 import request from '@/utils/request'
-import type { HasSpuResponseData } from './type'
+import type {
+  HasSpuResponseData,
+  AllTrademark,
+  SpuHasImg,
+  SaleAttrResponseData,
+  HasSaleAttrResponseData
+} from './type'
 
 const API = {
   //获取已有的SPU数据
-  HASSPU_URL: '/admin/product/'
+  HASSPU_URL: '/admin/product/',
+  //获取全部品牌的数据
+  ALLTRADEMARK_URL: '/admin/product/baseTrademark/getTrademarkList',
+  //获取某个SPU下的商品图片数据
+  IMAGE_URL: '/admin/product/spuImageList/',
+  //获取某个SPU下的属性列表
+  SPUHASSALEATTR_URL: '/admin/product/spuSaleAttrList/',
+  //获取全部的销售属性
+  ALLSALEATTR_URL: '/admin/product/baseSaleAttrList'
 } as const
 
 //获取某一个三级分类下已有的SPU数据
@@ -17,3 +31,15 @@ export const reqHasSpu = (
       category3Id
     }
   })
+//获取全部的SPU的品牌的数据
+export const reqAllTradeMark = () =>
+  request.get<any, AllTrademark>(API.ALLTRADEMARK_URL)
+//获取某个SPU下的商品图片数据
+export const reqSpuImageList = (spuId: number | string) =>
+  request.get<any, SpuHasImg>(API.IMAGE_URL + spuId)
+//获取某个SPU下的属性列表
+export const reqHasSaleAttr = (spuId: number | string) =>
+  request.get<any, SaleAttrResponseData>(API.HASSPU_URL + spuId)
+//获取全部的销售属性
+export const reqAllSaleAttr = () =>
+  request.get<any, HasSaleAttrResponseData>(API.ALLSALEATTR_URL)
