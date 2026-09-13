@@ -39,7 +39,7 @@
                 size="small"
                 icon="Edit"
                 title="修改SPU"
-                @click="updateSpu"
+                @click="updateSpu(row)"
               ></el-button>
               <el-button
                 type="info"
@@ -69,7 +69,11 @@
         />
       </div>
       <!-- 添加|修改SPU -->
-      <SpuForm v-show="scene == 1" @change-scene="changeScene"></SpuForm>
+      <SpuForm
+        v-show="scene == 1"
+        ref="spuForm"
+        @change-scene="changeScene"
+      ></SpuForm>
       <!-- 添加SKU的子组件 -->
       <SkuForm v-show="scene == 2"></SkuForm>
     </el-card>
@@ -80,7 +84,11 @@
 import { ref, watch } from 'vue'
 import useCategoryStore from '@/store/modules/category'
 import { reqHasSpu } from '@/api/product/spu'
-import type { HasSpuResponseData, Records } from '@/api/product/spu/type'
+import type {
+  HasSpuResponseData,
+  Records,
+  SpuData
+} from '@/api/product/spu/type'
 //引入子组件
 import SpuForm from './spuForm.vue'
 import SkuForm from './skuForm.vue'
@@ -96,6 +104,11 @@ watch(
     getHasSpu()
   }
 )
+
+//场景的数据
+const scene = ref<number>(0)
+// #region 场景0（显示已有的SPU数据）
+
 //获取某三级分类id下的SPU列表
 const getHasSpu = async (pager = 1) => {
   //修改分页器默认页码
@@ -111,10 +124,6 @@ const getHasSpu = async (pager = 1) => {
     total.value = res.data.total
   }
 }
-//场景的数据
-const scene = ref<number>(0)
-// #region 场景0（显示已有的SPU数据）
-
 //存储已有的SPU列表
 const records = ref<Records>([])
 //存储已有的SPU的总数
@@ -138,12 +147,14 @@ const changeScene = (num: number) => {
   scene.value = num
 }
 //修改已有的SPU按钮事件
-const updateSpu = () => {
+const updateSpu = (row: SpuData) => {
   //修改场景为修改SPU
   scene.value = 1
+  spuForm.value.initHasSpuData(row)
 }
 // #endregion
 // #region 场景1（添加|修改SPU）
+const spuForm = ref<any>()
 
 // #endregion
 // #region 场景2（添加SKU）

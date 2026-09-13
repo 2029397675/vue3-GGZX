@@ -15,14 +15,11 @@
     </el-form-item>
     <el-form-item label="SPU图片">
       <el-upload
-        v-model:file-list="fileList"
         action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
         list-type="picture-card"
-        :on-preview="handlePictureCardPreview"
-        :on-remove="handleRemove"
       >
-        <el-dialog v-model="dialogVisible">
-          <img w-full :src="dialogImageUrl" alt="Preview Image" />
+        <el-dialog>
+          <img w-full alt="Preview Image" />
         </el-dialog>
         <el-icon><Plus /></el-icon>
       </el-upload>
@@ -57,12 +54,53 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
+import {
+  reqAllSaleAttr,
+  reqAllTradeMark,
+  reqSpuImageList,
+  reqSpuHasSaleAttr
+} from '@/api/product/spu'
+import type {
+  SpuData,
+  AllTrademark,
+  SpuHasImg,
+  SaleAttrResponseData,
+  HasSaleAttrResponseData,
+  Trademark,
+  SpuImage,
+  SaleAttr,
+  HasSaleAttr
+} from '@/api/product/spu/type'
 //父组件的自定义事件
 const emit = defineEmits(['changeScene'])
 //点击取消按钮
 const cancel = () => {
   emit('changeScene', 0)
 }
+//存放数据
+const allTrademark = ref<Trademark[]>([])
+const imgList = ref<SpuImage[]>([])
+const saleAttr = ref<SaleAttr[]>([])
+const allSaleAttr = ref<HasSaleAttr[]>([])
+//子组件方法
+const initHasSpuData = async (spu: SpuData) => {
+  //spu即为父组件传递过来的已有的SPU对象（不完整）
+  //获取全部品牌的数据
+  const res: AllTrademark = await reqAllTradeMark()
+  allTrademark.value = res.data
+  //获取某个SPU下商品图片的数据
+  const res1: SpuHasImg = await reqSpuImageList(spu.id as number)
+  imgList.value = res1.data
+  //获取已有SPU下商品销售属性的数据
+  const res2: SaleAttrResponseData = await reqSpuHasSaleAttr(spu.id as number)
+  saleAttr.value = res2.data
+  //获取全部的销售属性
+  const res3: HasSaleAttrResponseData = await reqAllSaleAttr()
+  allSaleAttr.value = res3.data
+}
+
+defineExpose({ initHasSpuData })
 </script>
 
 <style lang="scss" scoped></style>
