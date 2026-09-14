@@ -53,16 +53,44 @@
         添加销售属性
       </el-button>
       <!-- tanle展示销售属性与属性值 -->
-      <el-table border style="margin: 10px 0">
+      <el-table border style="margin: 10px 0" :data="saleAttr">
         <el-table-column
           label="序号"
           width="80px"
           type="index"
           align="center"
         ></el-table-column>
-        <el-table-column label="属性名"></el-table-column>
-        <el-table-column label="属性值"></el-table-column>
-        <el-table-column label="操作" width="120px"></el-table-column>
+        <el-table-column label="属性名" prop="saleAttrName"></el-table-column>
+        <el-table-column label="属性值">
+          <template #default="{ row }">
+            <el-tag
+              v-for="tag in row.spuSaleAttrValueList"
+              :key="tag.id"
+              closable
+              :type="tag.type"
+              style="margin-left: 5px"
+            >
+              {{ tag.saleAttrValueName }}
+            </el-tag>
+
+            <el-button
+              style="margin-left: 5px"
+              type="success"
+              size="small"
+              icon="Plus"
+            ></el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="120px">
+          <template #default="{ row, $index }">
+            <el-button
+              type="danger"
+              size="small"
+              icon="Delete"
+              @click="saleAttr.splice($index, 1)"
+            ></el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-form-item>
     <el-form-item>

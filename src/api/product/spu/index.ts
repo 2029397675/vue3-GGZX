@@ -44,7 +44,7 @@ export const reqSpuImageList = (spuId: number | string) =>
   request.get<any, SpuHasImg>(API.IMAGE_URL + spuId)
 //获取某个SPU下的属性列表
 export const reqSpuHasSaleAttr = (spuId: number | string) =>
-  request.get<any, SaleAttrResponseData>(API.HASSPU_URL + spuId)
+  request.get<any, SaleAttrResponseData>(API.SPUHASSALEATTR_URL + spuId)
 //获取全部的销售属性
 export const reqAllSaleAttr = () =>
   request.get<any, HasSaleAttrResponseData>(API.ALLSALEATTR_URL)
