@@ -25,14 +25,23 @@
     </el-form-item>
     <el-form-item label="SPU图片">
       <el-upload
-        action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+        v-model:file-list="imgList as UploadUserFile[]"
+        action="api/admin/product/fileUpload"
         list-type="picture-card"
+        :on-preview="handlePictureCardPreview"
+        :on-remove="handleRemove"
+        :before-upload="handleUpload"
       >
-        <el-dialog>
-          <img w-full alt="Preview Image" />
-        </el-dialog>
         <el-icon><Plus /></el-icon>
       </el-upload>
+      <el-dialog v-model="dialogVisible">
+        <img
+          style="width: 100%; height: 100%"
+          w-full
+          :src="dialogImageUrl"
+          alt="Preview Image"
+        />
+      </el-dialog>
     </el-form-item>
     <el-form-item label="SPU销售属性">
       <el-select style="width: 200px">
@@ -64,6 +73,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ElMessage, type UploadUserFile } from 'element-plus' //导入上传组件的类型
 import { ref } from 'vue'
 import {
   reqAllSaleAttr,
@@ -88,6 +98,10 @@ const emit = defineEmits(['changeScene'])
 const cancel = () => {
   emit('changeScene', 0)
 }
+//控制对话框的显示与隐藏
+const dialogVisible = ref<boolean>(false)
+//对话框中预览图片的URL
+const dialogImageUrl = ref<string>('') //图片URL
 //存放数据
 const allTrademark = ref<Trademark[]>([])
 const imgList = ref<SpuImage[]>([])
@@ -112,7 +126,12 @@ const initHasSpuData = async (spu: SpuData) => {
   allTrademark.value = res.data
   //获取某个SPU下商品图片的数据
   const res1: SpuHasImg = await reqSpuImageList(spu.id as number)
-  imgList.value = res1.data
+  imgList.value = res1.data.map(item => {
+    return {
+      name: item.imgName,
+      url: item.imgUrl
+    }
+  })
   //获取已有SPU下商品销售属性的数据
   const res2: SaleAttrResponseData = await reqSpuHasSaleAttr(spu.id as number)
   saleAttr.value = res2.data
@@ -120,7 +139,26 @@ const initHasSpuData = async (spu: SpuData) => {
   const res3: HasSaleAttrResponseData = await reqAllSaleAttr()
   allSaleAttr.value = res3.data
 }
+//照片墙点击预览按钮事件
+const handlePictureCardPreview = (file: any) => {
+  dialogImageUrl.value = file.url
 
+  dialogVisible.value = true
+}
+//照片墙点击删除按钮事件
+const handleRemove = (file: any) => {}
+//照片墙上传图片前的事件
+const handleUpload = (file: any) => {
+  if (file.type == 'image/jpeg' || file.type == 'image/png') {
+    return true
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '上传的文件格式只能是jpeg或png'
+    })
+    return false
+  }
+}
 defineExpose({ initHasSpuData })
 </script>
 
