@@ -4,7 +4,8 @@ import type {
   AllTrademark,
   SpuHasImg,
   SaleAttrResponseData,
-  HasSaleAttrResponseData
+  HasSaleAttrResponseData,
+  SpuData
 } from './type'
 
 const API = {
@@ -17,7 +18,11 @@ const API = {
   //获取某个SPU下的属性列表
   SPUHASSALEATTR_URL: '/admin/product/spuSaleAttrList/',
   //获取全部的销售属性
-  ALLSALEATTR_URL: '/admin/product/baseSaleAttrList'
+  ALLSALEATTR_URL: '/admin/product/baseSaleAttrList',
+  //添加新的SPU
+  ADDSOU_URL: '/admin/product/saveSpuInfo',
+  //更新已有的SPU
+  UPDATE_URL: '/admin/product/updateSpuInfo'
 } as const
 
 //获取某一个三级分类下已有的SPU数据
@@ -43,3 +48,13 @@ export const reqSpuHasSaleAttr = (spuId: number | string) =>
 //获取全部的销售属性
 export const reqAllSaleAttr = () =>
   request.get<any, HasSaleAttrResponseData>(API.ALLSALEATTR_URL)
+//添加或更新SPU
+export const reqAddOrUpdateSpu = (data: SpuData) => {
+  //如果SPUId存在，则是更新操作
+  if (data.id) {
+    return request.post<any, any>(API.UPDATE_URL, data)
+  } else {
+    //否则是添加操作
+    return request.post<any, any>(API.ADDSOU_URL, data)
+  }
+}

@@ -154,7 +154,7 @@ const updateSpu = (row: SpuData) => {
 }
 // #endregion
 // #region 场景1（添加|修改SPU）
-const spuForm = ref<any>()
+const spuForm = ref<any>() //获取子组件SpuForm的引用
 
 // #endregion
 // #region 场景2（添加SKU）

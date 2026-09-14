@@ -10,9 +10,9 @@ export interface SpuData {
   spuName: string
   description: string
   category3Id: number | string
-  tmId: number
-  spuSaleAttrList: null
-  spuImageList: null
+  tmId: number | string
+  spuSaleAttrList: null | SpuImage[]
+  spuImageList: null | SaleAttr[]
 }
 //数组：元素是SpuData类型
 export type Records = SpuData[]
@@ -53,22 +53,22 @@ export interface SpuHasImg extends ResponseData {
 //已有的销售属性值的列表
 export interface SaleAttrValue {
   id?: number
-  createTime: null
-  updateTime: null
-  spuId: number
+  createTime?: null
+  updateTime?: null
+  spuId?: number
   baseSaleAttrId: number
   saleAttrValueName: string
-  saleAttrName: string
-  isChecked: boolean
+  saleAttrName?: string
+  isChecked?: boolean
 }
 //已有的销售属性值的列表
 export type SpuSaleAttrValueList = SaleAttrValue[]
 //销售属性对象
 export interface SaleAttr {
   id?: number
-  createTime: null
-  updateTime: null
-  spuId: number
+  createTime?: null
+  updateTime?: null
+  spuId?: number
   baseSaleAttrId: number
   saleAttrName: string
   spuSaleAttrValueList: SpuSaleAttrValueList
