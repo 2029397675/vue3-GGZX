@@ -79,22 +79,32 @@
         ></el-table-column>
         <el-table-column label="属性名" prop="saleAttrName"></el-table-column>
         <el-table-column label="属性值">
-          <template #default="{ row }">
+          <template #default="{ row, $index }">
             <el-tag
-              v-for="tag in row.spuSaleAttrValueList"
+              v-for="(tag, index) in row.spuSaleAttrValueList"
               :key="tag.id"
               closable
               :type="tag.type"
               style="margin-left: 5px"
+              @close="row.spuSaleAttrValueList.splice(index, 1)"
             >
               {{ tag.saleAttrValueName }}
             </el-tag>
-
+            <el-input
+              v-if="row.flag == true"
+              v-model="row.saleAttrValue"
+              placeholder="请输入属性值"
+              size="small"
+              style="width: 100px; margin-left: 5px"
+              @blur="toLook(row)"
+            ></el-input>
             <el-button
+              v-else
               style="margin-left: 5px"
               type="success"
               size="small"
               icon="Plus"
+              @click="toEdit(row)"
             ></el-button>
           </template>
         </el-table-column>
@@ -135,7 +145,8 @@ import type {
   Trademark,
   SpuImage,
   SaleAttr,
-  HasSaleAttr
+  HasSaleAttr,
+  SaleAttrValue
 } from '@/api/product/spu/type'
 
 //父组件的自定义事件
@@ -230,6 +241,38 @@ const addSaleAttr = () => {
   saleAttr.value.push(newSaleAttr)
   //清空输入框
   saleAttrIdAndValueName.value = ''
+}
+//属性值按钮：点击进入输入框编辑模式
+const toEdit = (row: SaleAttr) => {
+  row.flag = true
+
+  row.saleAttrValue = ''
+}
+//输入框失去焦点事件：将输入框中的值添加到数组中
+const toLook = (row: SaleAttr) => {
+  //回到编辑模式
+  row.flag = false
+  //整理收集的数据
+  const { baseSaleAttrId, saleAttrValue } = row
+  let newSaleAttrValur: SaleAttrValue = {
+    baseSaleAttrId,
+    saleAttrValueName: saleAttrValue as string
+  }
+  //非法情况判断
+  if ((saleAttrValue as string).trim() == '') {
+    ElMessage.error('属性值不能为空')
+    return
+  }
+  //判断属性值是否已经存在
+  let repeat = row.spuSaleAttrValueList.find(item => {
+    return item.saleAttrValueName == saleAttrValue
+  })
+  if (repeat) {
+    ElMessage.error('属性值已经存在')
+    return
+  }
+  //追加到数组中
+  row.spuSaleAttrValueList.push(newSaleAttrValur)
 }
 
 defineExpose({ initHasSpuData })
