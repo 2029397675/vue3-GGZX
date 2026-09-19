@@ -151,9 +151,10 @@ import type {
 } from '@/api/product/spu/type'
 //父组件的自定义事件
 const emit = defineEmits(['changeScene'])
+// #region 更新已有的SPU
 //点击取消按钮
 const cancel = () => {
-  emit('changeScene', 0)
+  emit('changeScene', { flag: 0, params: 'update' })
 }
 //控制对话框的显示与隐藏
 const dialogVisible = ref<boolean>(false)
@@ -290,13 +291,44 @@ const save = async () => {
   if (res.code == 200) {
     ElMessage.success(SpuParams.value.id ? '更新成功' : '添加成功')
 
-    emit('changeScene', 0) //回到列表页面
+    emit('changeScene', {
+      flag: 0,
+      params: SpuParams.value.id ? 'update' : 'add'
+    }) //回到列表页面
   } else {
     ElMessage.error('保存失败')
   }
 }
+// #endregion
 
-defineExpose({ initHasSpuData })
+// #region 新增SPU
+//添加一个新的SPU初始化方法
+const initAddSpu = async (c3Id: number | string) => {
+  //清空数据
+  Object.assign(SpuParams.value, {
+    category3Id: '', //分类三级ID
+    spuName: '', //SPU名称
+    description: '', //SPU描述
+    tmId: '', //品牌ID
+    spuImageList: [], //商品图片列表
+    spuSaleAttrList: [] //商品销售属性列表
+  }) //清空数据
+  //清空图片墙
+  imgList.value = []
+  //清空销售属性
+  saleAttr.value = []
+  saleAttrIdAndValueName.value = ''
+  //c3Id即为父组件传递过来的分类三级ID
+  SpuParams.value.category3Id = c3Id
+  //获取全部品牌数据
+  const res: AllTrademark = await reqAllTradeMark()
+  allTrademark.value = res.data
+  //获取所有销售属性
+  const res1: HasSaleAttrResponseData = await reqAllSaleAttr()
+  allSaleAttr.value = res1.data
+}
+// #endregion
+defineExpose({ initHasSpuData, initAddSpu })
 </script>
 
 <style lang="scss" scoped></style>

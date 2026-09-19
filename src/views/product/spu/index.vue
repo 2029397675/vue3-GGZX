@@ -92,6 +92,7 @@ import type {
 //引入子组件
 import SpuForm from './spuForm.vue'
 import SkuForm from './skuForm.vue'
+import { pa } from 'element-plus/es/locale/index.mjs'
 
 const categoryStore = useCategoryStore()
 
@@ -140,12 +141,20 @@ const changeSize = () => {
 const addSPU = () => {
   //修改场景为添加SPU
   scene.value = 1
+  //调用子组件SpuForm的initAddSpu方法初始化数据
+  spuForm.value.initAddSpu(categoryStore.c3Id)
 }
 //子组件SpuForm绑定自定义事件
-const changeScene = (num: number) => {
+const changeScene = (obj: { flag: number; params: string }) => {
   //子组件SpuForm点击取消转换为场景0
-  scene.value = num
-  getHasSpu()
+  scene.value = obj.flag
+  if (obj.params == 'update') {
+    //更新留在当前页
+    getHasSpu(pageNo.value)
+  } else {
+    //添加留在第一页
+    getHasSpu()
+  }
 }
 //修改已有的SPU按钮事件
 const updateSpu = (row: SpuData) => {
