@@ -145,6 +145,7 @@ const addSPU = () => {
 const changeScene = (num: number) => {
   //子组件SpuForm点击取消转换为场景0
   scene.value = num
+  getHasSpu()
 }
 //修改已有的SPU按钮事件
 const updateSpu = (row: SpuData) => {
