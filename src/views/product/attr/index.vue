@@ -139,7 +139,7 @@ import useCategoryStore from '@/store/modules/category'
 import { ElMessage } from 'element-plus'
 
 const categoryStore = useCategoryStore()
-const scene = ref<number>(1) //场景
+const scene = ref<number>(0) //场景
 const attrArr = ref<AttrData[]>([])
 const attrParams = reactive<AttrData>({
   attrName: '', //新增的属性值名字

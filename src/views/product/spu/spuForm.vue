@@ -320,7 +320,7 @@ const initAddSpu = async (c3Id: number | string) => {
   saleAttrIdAndValueName.value = ''
   //c3Id即为父组件传递过来的分类三级ID
   SpuParams.value.category3Id = c3Id
-  //获取全部品牌数据
+  //获取全部品牌数据.
   const res: AllTrademark = await reqAllTradeMark()
   allTrademark.value = res.data
   //获取所有销售属性

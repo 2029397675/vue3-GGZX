@@ -33,6 +33,7 @@
                 size="small"
                 icon="Plus"
                 title="添加SKU"
+                @click="addSku"
               ></el-button>
               <el-button
                 type="warning"
@@ -75,7 +76,7 @@
         @change-scene="changeScene"
       ></SpuForm>
       <!-- 添加SKU的子组件 -->
-      <SkuForm v-show="scene == 2"></SkuForm>
+      <SkuForm v-show="scene == 2" @change-scene="changeScene"></SkuForm>
     </el-card>
   </div>
 </template>
@@ -92,7 +93,6 @@ import type {
 //引入子组件
 import SpuForm from './spuForm.vue'
 import SkuForm from './skuForm.vue'
-import { pa } from 'element-plus/es/locale/index.mjs'
 
 const categoryStore = useCategoryStore()
 
@@ -107,10 +107,8 @@ watch(
 )
 
 //场景的数据
-const scene = ref<number>(0)
+const scene = ref<number>(2)
 // #region 场景0（显示已有的SPU数据）
-
-//获取某三级分类id下的SPU列表
 const getHasSpu = async (pager = 1) => {
   //修改分页器默认页码
   pageNo.value = pager
@@ -137,6 +135,12 @@ const pageSize = ref<number>(3)
 const changeSize = () => {
   getHasSpu()
 }
+// #endregion
+
+// #region 场景1（添加|修改SPU）
+const spuForm = ref<any>() //获取子组件SpuForm的引用
+//获取某三级分类id下的SPU列表
+
 //添加新的SPU按钮事件
 const addSPU = () => {
   //修改场景为添加SPU
@@ -163,11 +167,12 @@ const updateSpu = (row: SpuData) => {
   spuForm.value.initHasSpuData(row)
 }
 // #endregion
-// #region 场景1（添加|修改SPU）
-const spuForm = ref<any>() //获取子组件SpuForm的引用
 
-// #endregion
 // #region 场景2（添加SKU）
+//点击添加按钮显示场景2
+const addSku = () => {
+  scene.value = 2
+}
 // #endregion
 </script>
 
