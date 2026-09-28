@@ -33,7 +33,7 @@
                 size="small"
                 icon="Plus"
                 title="添加SKU"
-                @click="addSku"
+                @click="addSku(row)"
               ></el-button>
               <el-button
                 type="warning"
@@ -76,7 +76,11 @@
         @change-scene="changeScene"
       ></SpuForm>
       <!-- 添加SKU的子组件 -->
-      <SkuForm v-show="scene == 2" @change-scene="changeScene"></SkuForm>
+      <SkuForm
+        v-show="scene == 2"
+        ref="sku"
+        @change-scene="changeScene"
+      ></SkuForm>
     </el-card>
   </div>
 </template>
@@ -169,9 +173,14 @@ const updateSpu = (row: SpuData) => {
 // #endregion
 
 // #region 场景2（添加SKU）
+//获取子组件SkuForm的引用
+const sku = ref<any>()
 //点击添加按钮显示场景2
-const addSku = () => {
+const addSku = (row: SpuData) => {
   scene.value = 2
+  console.log(row)
+
+  sku.value.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row) //调用子组件SkuForm的initSkuData方法初始化数据
 }
 // #endregion
 </script>
