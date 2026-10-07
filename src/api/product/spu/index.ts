@@ -5,7 +5,8 @@ import type {
   SpuHasImg,
   SaleAttrResponseData,
   HasSaleAttrResponseData,
-  SpuData
+  SpuData,
+  SkuData
 } from './type'
 
 const API = {
@@ -22,7 +23,9 @@ const API = {
   //添加新的SPU
   ADDSOU_URL: '/admin/product/saveSpuInfo',
   //更新已有的SPU
-  UPDATE_URL: '/admin/product/updateSpuInfo'
+  UPDATE_URL: '/admin/product/updateSpuInfo',
+  //追加一个新增的SKU地址
+  ADDSKU_URL: '/admin/product/saveSkuInfo'
 } as const
 
 //获取某一个三级分类下已有的SPU数据
@@ -58,3 +61,6 @@ export const reqAddOrUpdateSpu = (data: SpuData) => {
     return request.post<any, any>(API.ADDSOU_URL, data)
   }
 }
+//添加SUK的请求方法
+export const reqAddSku = (data: SkuData) =>
+  request.post<any, any>(API.ADDSKU_URL, data)

@@ -2,16 +2,28 @@
   <div>
     <el-form label-width="100px">
       <el-form-item label="sku名称">
-        <el-input placeholder="SKU名称"></el-input>
+        <el-input v-model="skuParams.skuName" placeholder="SKU名称"></el-input>
       </el-form-item>
       <el-form-item label="价格(元)">
-        <el-input type="number" placeholder="价格(元)"></el-input>
+        <el-input
+          v-model="skuParams.price"
+          type="number"
+          placeholder="价格(元)"
+        ></el-input>
       </el-form-item>
       <el-form-item label="重量(克)">
-        <el-input type="number" placeholder="重量(克)"></el-input>
+        <el-input
+          v-model="skuParams.weight"
+          type="number"
+          placeholder="重量(克)"
+        ></el-input>
       </el-form-item>
       <el-form-item label="sku描述">
-        <el-input placeholder="SKU描述" type="textarea"></el-input>
+        <el-input
+          v-model="skuParams.skuDesc"
+          placeholder="SKU描述"
+          type="textarea"
+        ></el-input>
       </el-form-item>
       <el-form-item label="平台属性">
         <el-form :inline="true">
@@ -84,9 +96,8 @@
 //引入请求api
 import { reqAttr } from '@/api/product/attr'
 import { reqSpuHasSaleAttr, reqSpuImageList } from '@/api/product/spu'
-import { ro } from 'element-plus/es/locale/index.mjs'
-import { ref } from 'vue'
-import { it } from 'vue-router/dist/index-BzEKChPW.js'
+import type { SkuData } from '@/api/product/spu/type'
+import { reactive, ref } from 'vue'
 
 const emit = defineEmits(['changeScene'])
 //取消按钮
@@ -100,6 +111,21 @@ const attrArr = ref<any>([])
 const saleArr = ref<any>([])
 //照片墙数据
 const imgArr = ref<any>([])
+//收集SKU的数据
+const skuParams = reactive<SkuData>({
+  //父组件传递过来的数据
+  catrgory3Id: '',
+  spuId: '',
+  tmId: '',
+  //v-model收集的数据
+  skuName: '',
+  price: '',
+  weight: '',
+  skuDesc: '',
+  skuAttrValueList: [],
+  skuSaleAttrValueList: [],
+  skuDefaultImg: ''
+})
 
 //初始化sku数据
 const initSkuData = async (
@@ -107,6 +133,11 @@ const initSkuData = async (
   c2Id: number | string,
   spu: any
 ) => {
+  //收集数据
+  skuParams.catrgory3Id = spu.category3Id
+  skuParams.spuId = spu.id
+  skuParams.tmId = spu.tmId
+
   //获取平台属性
   const res = await reqAttr(c1Id, c2Id, spu.category3Id)
   attrArr.value = res.data
