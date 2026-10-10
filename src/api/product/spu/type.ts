@@ -91,7 +91,7 @@ export interface HasSaleAttrResponseData extends ResponseData {
 }
 
 export interface SkuData {
-  catrgory3Id: number | string
+  category3Id: number | string
   spuId: number | string
   tmId: number | string
   skuName: string

@@ -178,7 +178,6 @@ const sku = ref<any>()
 //点击添加按钮显示场景2
 const addSku = (row: SpuData) => {
   scene.value = 2
-  console.log(row)
 
   sku.value.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row) //调用子组件SkuForm的initSkuData方法初始化数据
 }

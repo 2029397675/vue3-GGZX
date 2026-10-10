@@ -32,12 +32,12 @@
             :key="item.id"
             :label="item.attrName"
           >
-            <el-select style="width: 200px">
+            <el-select v-model="item.attrIdAndValueId" style="width: 200px">
               <el-option
                 v-for="(attrValue, index) in item.attrValueList"
                 :key="attrValue.id"
                 :label="attrValue.valueName"
-                :value="attrValue.id"
+                :value="`${item.id}:${attrValue.id}`"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -50,18 +50,19 @@
             :key="item.id"
             :label="item.saleAttrName"
           >
-            <el-select style="width: 200px">
+            <el-select v-model="item.saleIdAndValueId" style="width: 200px">
               <el-option
                 v-for="saleAttrValue in item.spuSaleAttrValueList"
                 :key="saleAttrValue.id"
                 :label="saleAttrValue.saleAttrValueName"
+                :value="`${item.id}:${saleAttrValue.id}`"
               ></el-option>
             </el-select>
           </el-form-item>
         </el-form>
       </el-form-item>
       <el-form-item label="图片名称">
-        <el-table border :data="imgArr">
+        <el-table ref="table" border :data="imgArr">
           <el-table-column
             type="selection"
             width="80"
@@ -79,13 +80,15 @@
           <el-table-column label="名称" prop="imgName"></el-table-column>
           <el-table-column label="操作">
             <template #default="{ row, $index }">
-              <el-button type="warning" size="small">设置默认</el-button>
+              <el-button type="warning" size="small" @click="handler(row)">
+                设置默认
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" @click="save">保存</el-button>
         <el-button type="default" @click="cancel">取消</el-button>
       </el-form-item>
     </el-form>
@@ -95,8 +98,13 @@
 <script lang="ts" setup>
 //引入请求api
 import { reqAttr } from '@/api/product/attr'
-import { reqSpuHasSaleAttr, reqSpuImageList } from '@/api/product/spu'
+import {
+  reqAddSku,
+  reqSpuHasSaleAttr,
+  reqSpuImageList
+} from '@/api/product/spu'
 import type { SkuData } from '@/api/product/spu/type'
+import { ElMessage } from 'element-plus'
 import { reactive, ref } from 'vue'
 
 const emit = defineEmits(['changeScene'])
@@ -104,6 +112,50 @@ const emit = defineEmits(['changeScene'])
 const cancel = () => {
   emit('changeScene', { flag: 0, params: '' })
 }
+//保存按钮
+const save = async () => {
+  //整理参数
+  // 平台属性
+  skuParams.skuAttrValueList = attrArr.value.reduce((acc: any, cur: any) => {
+    if (cur.attrIdAndValueId) {
+      let [attrId, valueId] = cur.attrIdAndValueId.split(':')
+      acc.push({
+        attrId,
+        valueId
+      })
+    }
+    return acc
+  }, [])
+  //销售属性
+  skuParams.skuSaleAttrValueList = saleArr.value.reduce(
+    (acc: any, cur: any) => {
+      if (cur.saleIdAndValueId) {
+        let [saleAttrId, saleAttrValueId] = cur.saleIdAndValueId.split(':')
+        acc.push({
+          saleAttrId,
+          saleAttrValueId
+        })
+      }
+      return acc
+    },
+    []
+  )
+  //照片墙
+  //发请求
+  const res = await reqAddSku(skuParams)
+
+  //成功
+  if (res.code === 200) {
+    ElMessage.success('添加SKU成功')
+    //返回给父组件
+    emit('changeScene', { flag: 1, params: '' })
+  } else {
+    //失败
+    ElMessage.error('添加SKU失败')
+  }
+}
+//获取table组件实例
+const table = ref<any>()
 
 //平台属性数据
 const attrArr = ref<any>([])
@@ -114,8 +166,8 @@ const imgArr = ref<any>([])
 //收集SKU的数据
 const skuParams = reactive<SkuData>({
   //父组件传递过来的数据
-  catrgory3Id: '',
-  spuId: '',
+  category3Id: '',
+  spuID: '',
   tmId: '',
   //v-model收集的数据
   skuName: '',
@@ -134,8 +186,8 @@ const initSkuData = async (
   spu: any
 ) => {
   //收集数据
-  skuParams.catrgory3Id = spu.category3Id
-  skuParams.spuId = spu.id
+  skuParams.category3Id = spu.category3Id
+  skuParams.spuID = spu.id
   skuParams.tmId = spu.tmId
 
   //获取平台属性
@@ -147,6 +199,14 @@ const initSkuData = async (
   //获取照片墙的数据
   const res2 = await reqSpuImageList(spu.id)
   imgArr.value = res2.data
+}
+//设置默认图片的方法回调
+const handler = (row: any) => {
+  //表格复选框选中
+  table.value.clearSelection()
+  table.value.toggleRowSelection(row, true)
+
+  skuParams.skuDefaultImg = row.imgUrl
 }
 //对外进行暴露的子组件方法
 defineExpose({
