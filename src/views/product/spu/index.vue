@@ -49,12 +49,20 @@
                 title="查看SPU"
                 @click="findSku(row)"
               ></el-button>
-              <el-button
-                type="danger"
-                size="small"
-                icon="Delete"
-                title="删除SPU"
-              ></el-button>
+              <el-popconfirm
+                :title="`你确定要删除${row.spuName}吗？`"
+                style="width: 200px"
+                @confirm="deleteSpu(row.id)"
+              >
+                <template #reference>
+                  <el-button
+                    type="danger"
+                    size="small"
+                    icon="Delete"
+                    title="删除SPU"
+                  ></el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -104,9 +112,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onBeforeUnmount } from 'vue'
 import useCategoryStore from '@/store/modules/category'
-import { reqHasSpu, reqSkuList } from '@/api/product/spu'
+import { reqHasSpu, reqRemoveSpu, reqSkuList } from '@/api/product/spu'
 import type {
   HasSpuResponseData,
   Records,
@@ -164,6 +172,17 @@ const changeSize = () => {
 const skuArr = ref<SkuData[]>([])
 //dialog对话框：用于展示已有的sku
 const show = ref<boolean>(false)
+//删除某三级分类id下的SPU
+const deleteSpu = async (id: number | string) => {
+  const res = await reqRemoveSpu(id)
+  if (res.code === 200) {
+    ElMessage.success('删除SPU成功')
+    //删除后重新获取三级分类id下的SPU列表
+    getHasSpu()
+  } else {
+    ElMessage.error('删除SPU失败')
+  }
+}
 //查看sku下的所有spu
 const findSku = async (row: SpuData) => {
   const res: SkuInfoData = await reqSkuList(row.id as number)
@@ -217,6 +236,8 @@ const addSku = (row: SpuData) => {
   sku.value.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row) //调用子组件SkuForm的initSkuData方法初始化数据
 }
 // #endregion
+//路由组件卸载时清除关于分类的数据
+onBeforeUnmount(() => {})
 </script>
 
 <style lang="scss" scoped></style>

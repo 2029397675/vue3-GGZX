@@ -28,7 +28,9 @@ const API = {
   //追加一个新增的SKU地址
   ADDSKU_URL: '/admin/product/saveSkuInfo',
   //查看某一个SPU下的SKU列表
-  SKUINFO_URL: '/admin/product/findBySpuId/'
+  SKUINFO_URL: '/admin/product/findBySpuId/',
+  //删除已有的SPU
+  REMOVESPU_URL: '/admin/product/deleteSpu/'
 } as const
 
 //获取某一个三级分类下已有的SPU数据
@@ -69,3 +71,6 @@ export const reqAddSku = (data: SkuData) =>
   request.post<any, any>(API.ADDSKU_URL, data)
 export const reqSkuList = (spuId: number | string) =>
   request.get<any, SkuInfoData>(API.SKUINFO_URL + spuId)
+//删除SPU
+export const reqRemoveSpu = (spuId: number | string) =>
+  request.delete<any, any>(API.REMOVESPU_URL + spuId)
