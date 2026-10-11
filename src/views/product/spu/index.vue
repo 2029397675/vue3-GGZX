@@ -47,6 +47,7 @@
                 size="small"
                 icon="View"
                 title="查看SPU"
+                @click="findSku(row)"
               ></el-button>
               <el-button
                 type="danger"
@@ -81,6 +82,23 @@
         ref="sku"
         @change-scene="changeScene"
       ></SkuForm>
+      <!-- dialog对话框：用于展示已有的sku -->
+      <el-dialog v-model="show" title="SKU列表">
+        <el-table border :data="skuArr">
+          <el-table-column label="SKU名称" prop="skuName"></el-table-column>
+          <el-table-column label="SKU价格" prop="skuDesc"></el-table-column>
+          <el-table-column label="SKU重量" prop="skuDesc"></el-table-column>
+          <el-table-column label="SKU图片">
+            <template #default="{ row }">
+              <img
+                :src="row.skuDefaultImg"
+                alt=""
+                style="width: 100px; height: 100px"
+              />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -88,15 +106,18 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import useCategoryStore from '@/store/modules/category'
-import { reqHasSpu } from '@/api/product/spu'
+import { reqHasSpu, reqSkuList } from '@/api/product/spu'
 import type {
   HasSpuResponseData,
   Records,
-  SpuData
+  SpuData,
+  SkuInfoData,
+  SkuData
 } from '@/api/product/spu/type'
 //引入子组件
 import SpuForm from './spuForm.vue'
 import SkuForm from './skuForm.vue'
+import { ElMessage } from 'element-plus'
 
 const categoryStore = useCategoryStore()
 
@@ -111,7 +132,7 @@ watch(
 )
 
 //场景的数据
-const scene = ref<number>(2)
+const scene = ref<number>(0)
 // #region 场景0（显示已有的SPU数据）
 const getHasSpu = async (pager = 1) => {
   //修改分页器默认页码
@@ -138,6 +159,20 @@ const pageSize = ref<number>(3)
 //分页器每页条数变化时触发
 const changeSize = () => {
   getHasSpu()
+}
+//sku
+const skuArr = ref<SkuData[]>([])
+//dialog对话框：用于展示已有的sku
+const show = ref<boolean>(false)
+//查看sku下的所有spu
+const findSku = async (row: SpuData) => {
+  const res: SkuInfoData = await reqSkuList(row.id as number)
+  if (res.code === 200) {
+    skuArr.value = res.data
+    show.value = true
+  } else {
+    ElMessage.error('获取sku失败')
+  }
 }
 // #endregion
 

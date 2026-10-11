@@ -92,7 +92,7 @@ export interface HasSaleAttrResponseData extends ResponseData {
 
 export interface SkuData {
   category3Id: number | string
-  spuId: number | string
+  spuID: number | string
   tmId: number | string
   skuName: string
   price: number | string
@@ -107,4 +107,8 @@ export interface SkuData {
     saleAttrValueId: number | string
   }[]
   skuDefaultImg: string
+}
+//某一个SPU下的全部SKU的数据类型
+export interface SkuInfoData extends ResponseData {
+  data: SkuData[]
 }
