@@ -41,8 +41,18 @@
         ></el-table-column>
         <el-table-column label="操作" width="210px" fixed="right">
           <template #default="{ row }">
-            <el-button type="info" size="small" icon="Bottom"></el-button>
-            <el-button type="primary" size="small" icon="Edit"></el-button>
+            <el-button
+              :type="row.isSale == 1 ? 'info' : 'success'"
+              size="small"
+              :icon="row.isSale == 1 ? 'Bottom' : 'Top'"
+              @click="updateSale(row)"
+            ></el-button>
+            <el-button
+              type="primary"
+              size="small"
+              icon="Edit"
+              @click="edit"
+            ></el-button>
             <el-button type="info" size="small" icon="InfoFilled"></el-button>
             <el-button type="danger" size="small" icon="Delete"></el-button>
           </template>
@@ -64,8 +74,9 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import { reqSkuList } from '@/api/product/sku'
+import { reqCancelSaleSku, reqSaveSaleSku, reqSkuList } from '@/api/product/sku'
 import type { SkuData, SkuResponseData } from '@/api/product/sku/type' //引入接口类型
+import { ElMessage } from 'element-plus'
 
 //分页器当前页码
 const pageNo = ref<number>(1)
@@ -88,6 +99,21 @@ const getHasSku = async (pager = 1) => {
     skuArr.value = res.data.records
     total.value = res.data.total
   }
+}
+//更新sku状态
+const updateSale = async (row: SkuData) => {
+  if (row.isSale == 1) {
+    await reqCancelSaleSku(row.id as number)
+    ElMessage.success('下架成功')
+  } else {
+    await reqSaveSaleSku(row.id as number)
+    ElMessage.success('上架成功')
+  }
+  getHasSku(pageNo.value) //更新后重新获取数据
+}
+//编辑sku
+const edit = () => {
+  ElMessage.success('程序正在研发中')
 }
 </script>
 

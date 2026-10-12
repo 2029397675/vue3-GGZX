@@ -21,6 +21,8 @@ export interface SkuData {
     saleAttrValueId: number | string
   }[]
   skuDefaultImg: string
+  isSale?: number
+  id?: number
 }
 export interface SaleAttrValue {
   id?: number
