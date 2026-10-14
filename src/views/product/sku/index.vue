@@ -53,7 +53,12 @@
               icon="Edit"
               @click="edit"
             ></el-button>
-            <el-button type="info" size="small" icon="InfoFilled"></el-button>
+            <el-button
+              type="info"
+              size="small"
+              icon="InfoFilled"
+              @click="findSku(row)"
+            ></el-button>
             <el-button type="danger" size="small" icon="Delete"></el-button>
           </template>
         </el-table-column>
@@ -68,13 +73,68 @@
         @current-change="getHasSku"
         @size-change="getHasSku"
       />
+      <!-- 抽屉组件 展示商品详情 -->
+      <el-drawer v-model="drawer" direction="rtl">
+        <template #header>
+          <h4>查看商品详情</h4>
+        </template>
+        <template #default>
+          <div>
+            <el-row>
+              <el-col :span="6">名称</el-col>
+              <el-col :span="18">435</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="6">描述</el-col>
+              <el-col :span="18">435</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="6">价格</el-col>
+              <el-col :span="18">435</el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="6">平台属性</el-col>
+              <el-col :span="18">
+                <el-tag>23</el-tag>
+                <el-tag>23</el-tag>
+                <el-tag>23</el-tag>
+                <el-tag>23</el-tag>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="6">销售属性</el-col>
+              <el-col :span="18">
+                <el-tag>23</el-tag>
+                <el-tag>23</el-tag>
+                <el-tag>23</el-tag>
+                <el-tag>23</el-tag>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="6">商品图片</el-col>
+              <el-col :span="18">
+                <el-carousel :interval="4000" type="card" height="200px">
+                  <el-carousel-item v-for="item in 6" :key="item">
+                    <h3 text="2xl" justify="center">{{ item }}</h3>
+                  </el-carousel-item>
+                </el-carousel>
+              </el-col>
+            </el-row>
+          </div>
+        </template>
+      </el-drawer>
     </el-card>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import { reqCancelSaleSku, reqSaveSaleSku, reqSkuList } from '@/api/product/sku'
+import {
+  reqCancelSaleSku,
+  reqSaveSaleSku,
+  reqSkuList,
+  reqSkuInfo
+} from '@/api/product/sku'
 import type { SkuData, SkuResponseData } from '@/api/product/sku/type' //引入接口类型
 import { ElMessage } from 'element-plus'
 
@@ -86,6 +146,8 @@ const pageSize = ref<number>(10)
 const total = ref<number>(0)
 //SKU列表数据
 const skuArr = ref<SkuData[]>([])
+//抽屉组件是否显示
+const drawer = ref<boolean>(false)
 //组件挂载后获取数据
 onMounted(() => {
   getHasSku()
@@ -115,6 +177,30 @@ const updateSale = async (row: SkuData) => {
 const edit = () => {
   ElMessage.success('程序正在研发中')
 }
+//查看商品详情
+const findSku = async (row: SkuData) => {
+  drawer.value = true
+}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-row {
+  margin: 10px 0;
+  .el-tag {
+    margin: 0 5px;
+  }
+  .el-carousel__item h3 {
+    color: #475669;
+    opacity: 0.75;
+    line-height: 200px;
+    margin: 0;
+    text-align: center;
+  }
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+  .el-carousel__item:nth-child(2n + 1) {
+    background-color: #d3dce6;
+  }
+}
+</style>

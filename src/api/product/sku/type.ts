@@ -62,3 +62,7 @@ export interface SkuResponseData extends ResponseData {
     pages: number
   }
 }
+//获取sku商品详情接口返回的数据ts类型
+export interface SkuInfoData extends ResponseData {
+  data: SkuData
+}
