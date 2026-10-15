@@ -10,7 +10,9 @@ const API = {
   //商品下架
   CANCELSALE_URL: '/admin/product/cancelSale/',
   //获取商品详情
-  SKUINFO_URL: '/admin/product/getSkuInfo/'
+  SKUINFO_URL: '/admin/product/getSkuInfo/',
+  //删除已有的商品
+  DELETESKU_URL: '/admin/product/deleteSku/'
 } as const
 
 //获取商品SKU的接口
@@ -25,3 +27,6 @@ export const reqCancelSaleSku = (skuId: number) =>
 //获取商品详情
 export const reqSkuInfo = (skuId: number) =>
   request.get<any, SkuInfoData>(API.SKUINFO_URL + skuId)
+//删除已有的商品
+export const reqRemoveSku = (skuId: number) =>
+  request.delete<any, any>(API.DELETESKU_URL + skuId)
