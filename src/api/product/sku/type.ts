@@ -5,22 +5,26 @@ export interface ResponseData {
 }
 // sku类型列表
 export interface SkuData {
-  category3Id: number | string
-  spuID: number | string
-  tmId: number | string
-  skuName: string
-  price: number | string
-  weight: number | string
-  skuDesc: string
+  category3Id?: number | string
+  spuID?: number | string
+  tmId?: number | string
+  skuName?: string
+  price?: number | string
+  weight?: number | string
+  skuDesc?: string
   skuAttrValueList?: {
+    id?: number | string
+    valueName?: string
     attrId: number | string
     valueId: number | string
   }[]
   skuSaleAttrValueList?: {
+    id?: number | string
+    saleAttrValueName?: string
     saleAttrId: number | string
     saleAttrValueId: number | string
   }[]
-  skuDefaultImg: string
+  skuDefaultImg?: string
   isSale?: number
   id?: number
 }

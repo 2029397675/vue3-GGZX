@@ -82,40 +82,44 @@
           <div>
             <el-row>
               <el-col :span="6">名称</el-col>
-              <el-col :span="18">435</el-col>
+              <el-col :span="18">{{ skuInfo.skuName }}</el-col>
             </el-row>
             <el-row>
               <el-col :span="6">描述</el-col>
-              <el-col :span="18">435</el-col>
+              <el-col :span="18">{{ skuInfo.skuDesc }}</el-col>
             </el-row>
             <el-row>
               <el-col :span="6">价格</el-col>
-              <el-col :span="18">435</el-col>
+              <el-col :span="18">{{ skuInfo.price }}</el-col>
             </el-row>
             <el-row>
               <el-col :span="6">平台属性</el-col>
               <el-col :span="18">
-                <el-tag>23</el-tag>
-                <el-tag>23</el-tag>
-                <el-tag>23</el-tag>
-                <el-tag>23</el-tag>
+                <el-tag v-for="item in skuInfo.skuAttrValueList" :key="item.id">
+                  {{ item.valueName }}
+                </el-tag>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="6">销售属性</el-col>
               <el-col :span="18">
-                <el-tag>23</el-tag>
-                <el-tag>23</el-tag>
-                <el-tag>23</el-tag>
-                <el-tag>23</el-tag>
+                <el-tag
+                  v-for="item in skuInfo.skuSaleAttrValueList"
+                  :key="item.id"
+                >
+                  {{ item.saleAttrValueName }}
+                </el-tag>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="6">商品图片</el-col>
               <el-col :span="18">
                 <el-carousel :interval="4000" type="card" height="200px">
-                  <el-carousel-item v-for="item in 6" :key="item">
-                    <h3 text="2xl" justify="center">{{ item }}</h3>
+                  <el-carousel-item
+                    v-for="item in skuInfo.skuImageList"
+                    :key="item.id"
+                  >
+                    <img :src="item.imgUrl" alt="" />
                   </el-carousel-item>
                 </el-carousel>
               </el-col>
@@ -135,7 +139,11 @@ import {
   reqSkuList,
   reqSkuInfo
 } from '@/api/product/sku'
-import type { SkuData, SkuResponseData } from '@/api/product/sku/type' //引入接口类型
+import type {
+  SkuData,
+  SkuInfoData,
+  SkuResponseData
+} from '@/api/product/sku/type' //引入接口类型
 import { ElMessage } from 'element-plus'
 
 //分页器当前页码
@@ -148,6 +156,7 @@ const total = ref<number>(0)
 const skuArr = ref<SkuData[]>([])
 //抽屉组件是否显示
 const drawer = ref<boolean>(false)
+const skuInfo = ref<SkuData>({})
 //组件挂载后获取数据
 onMounted(() => {
   getHasSku()
@@ -179,7 +188,13 @@ const edit = () => {
 }
 //查看商品详情
 const findSku = async (row: SkuData) => {
+  //控制抽屉组件显示
   drawer.value = true
+  //获取商品详情的数据
+  const res: SkuInfoData = await reqSkuInfo(row.id as number)
+  if (res.code === 200) {
+    skuInfo.value = res.data
+  }
 }
 </script>
 
@@ -188,6 +203,7 @@ const findSku = async (row: SkuData) => {
   margin: 10px 0;
   .el-tag {
     margin: 0 5px;
+    margin-bottom: 5px;
   }
   .el-carousel__item h3 {
     color: #475669;
@@ -201,6 +217,10 @@ const findSku = async (row: SkuData) => {
   }
   .el-carousel__item:nth-child(2n + 1) {
     background-color: #d3dce6;
+  }
+  img {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>
