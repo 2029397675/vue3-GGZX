@@ -12,7 +12,7 @@
       </el-form>
     </el-card>
     <el-card style="margin: 10px 0">
-      <el-button type="primary">添加用户</el-button>
+      <el-button type="primary" @click="addUser">添加用户</el-button>
       <el-button type="danger">批量删除</el-button>
       <!-- 表格展示用户信息 -->
       <el-table style="margin: 10px 0" border :data="userArr">
@@ -60,7 +60,13 @@
             >
               分配角色
             </el-button>
-            <el-button style="width: 80px" icon="Edit" size="small" type="info">
+            <el-button
+              style="width: 80px"
+              icon="Edit"
+              size="small"
+              type="info"
+              @click="updateUser(row)"
+            >
               编辑
             </el-button>
             <el-button
@@ -85,13 +91,40 @@
         @change="getHasUser"
       />
     </el-card>
+    <!-- 抽屉结构用于添加新的用户|更改用户信息 -->
+    <el-drawer v-model="drawer">
+      <template #header>
+        <h4>添加用户</h4>
+      </template>
+      <template #default>
+        <div>
+          <el-form>
+            <el-form-item label="用户姓名">
+              <el-input placeholder="请输入用户姓名"></el-input>
+            </el-form-item>
+            <el-form-item label="用户昵称">
+              <el-input placeholder="请输入用户昵称"></el-input>
+            </el-form-item>
+            <el-form-item label="用户密码">
+              <el-input placeholder="请输入用户密码" type="password"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
+      <template #footer>
+        <div style="flex: auto">
+          <el-button type="primary">保存</el-button>
+          <el-button @click="drawer = false">取消</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { reqUserInfo } from '@/api/acl/user'
-import type { UserResponseData, Records } from '@/api/acl/user/type' //引入用户信息类型
+import type { UserResponseData, Records, User } from '@/api/acl/user/type' //引入用户信息类型
 import { ElMessage } from 'element-plus'
 
 //默认页码
@@ -117,6 +150,19 @@ const getHasUser = async (pager = 1) => {
 onMounted(() => {
   getHasUser()
 })
+//#region 抽屉结构
+//控制抽屉显示与隐藏
+const drawer = ref<boolean>(false)
+//添加用户
+const addUser = () => {
+  drawer.value = true
+}
+//更新用户
+const updateUser = (row: User) => {
+  drawer.value = true
+  console.log(row)
+}
+//#endregion
 </script>
 
 <style lang="scss" scoped>
