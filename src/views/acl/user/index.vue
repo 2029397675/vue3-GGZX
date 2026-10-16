@@ -98,20 +98,20 @@
       </template>
       <template #default>
         <div>
-          <el-form>
-            <el-form-item label="用户姓名">
+          <el-form ref="formRef" :model="userParams" :rules="rules">
+            <el-form-item label="用户姓名" prop="username">
               <el-input
                 v-model="userParams.username"
                 placeholder="请输入用户姓名"
               ></el-input>
             </el-form-item>
-            <el-form-item label="用户昵称">
+            <el-form-item label="用户昵称" prop="name">
               <el-input
                 v-model="userParams.name"
                 placeholder="请输入用户昵称"
               ></el-input>
             </el-form-item>
-            <el-form-item label="用户密码">
+            <el-form-item label="用户密码" prop="password">
               <el-input
                 v-model="userParams.password"
                 placeholder="请输入用户密码"
@@ -132,7 +132,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, nextTick } from 'vue'
 import { reqUserInfo, reqAddOrUpdateUser } from '@/api/acl/user'
 import type { UserResponseData, Records, User } from '@/api/acl/user/type' //引入用户信息类型
 import { ElMessage } from 'element-plus'
@@ -169,9 +169,15 @@ onMounted(() => {
 //#region 抽屉结构
 //控制抽屉显示与隐藏
 const drawer = ref<boolean>(false)
+//form组件
+const formRef = ref<any>(null)
 //添加用户
 const addUser = () => {
+  nextTick(() => {
+    formRef.value.resetFields() //清空表单验证信息
+  })
   drawer.value = true
+
   //清空收集用户信息
   Object.assign(userParams, {
     username: '',
@@ -186,6 +192,7 @@ const updateUser = (row: User) => {
 }
 //保存用户信息
 const save = async () => {
+  await formRef.value.validator()
   const res = await reqAddOrUpdateUser(userParams)
   if (res.code === 200) {
     ElMessage.success(userParams.id ? '更新用户信息成功' : '添加用户信息成功')
@@ -195,6 +202,56 @@ const save = async () => {
   }
   drawer.value = false
 }
+//表单验证规则
+const validatorUsername = (rule: any, value: any, callback: any) => {
+  //用户名长度验证
+  if (value.trim().length < 5 || value.trim().length > 15) {
+    callback(new Error('用户名长度必须在5到15个字符之间'))
+  } else {
+    callback()
+  }
+}
+const validatorName = (rule: any, value: any, callback: any) => {
+  //用户昵称长度验证
+  if (value.trim().length < 5 || value.trim().length > 15) {
+    callback(new Error('用户昵称长度必须在5到15个字符之间'))
+  } else {
+    callback()
+  }
+}
+const validatorPassword = (rule: any, value: any, callback: any) => {
+  //用户密码长度验证
+  if (value.trim().length < 6 || value.trim().length > 15) {
+    callback(new Error('用户密码长度必须在6到15个字符之间'))
+  } else {
+    callback()
+  }
+}
+const rules = {
+  username: [
+    {
+      required: true,
+      trigger: 'blur',
+      validator: validatorUsername
+    }
+  ],
+  name: [
+    {
+      required: true,
+      trigger: 'blur',
+      validator: validatorName
+    }
+  ],
+  password: [
+    {
+      required: true,
+      trigger: 'blur',
+      validator: validatorPassword
+    }
+  ]
+}
+//用户名验证规则
+
 //#endregion
 </script>
 
