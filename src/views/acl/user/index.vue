@@ -25,12 +25,12 @@
         <el-table-column align="center" prop="id" label="ID"></el-table-column>
         <el-table-column
           align="center"
-          prop="remark"
+          prop="username"
           label="用户名字"
         ></el-table-column>
         <el-table-column
           align="center"
-          prop="remark"
+          prop="name"
           label="用户名称"
         ></el-table-column>
         <el-table-column
@@ -100,20 +100,30 @@
         <div>
           <el-form>
             <el-form-item label="用户姓名">
-              <el-input placeholder="请输入用户姓名"></el-input>
+              <el-input
+                v-model="userParams.username"
+                placeholder="请输入用户姓名"
+              ></el-input>
             </el-form-item>
             <el-form-item label="用户昵称">
-              <el-input placeholder="请输入用户昵称"></el-input>
+              <el-input
+                v-model="userParams.name"
+                placeholder="请输入用户昵称"
+              ></el-input>
             </el-form-item>
             <el-form-item label="用户密码">
-              <el-input placeholder="请输入用户密码" type="password"></el-input>
+              <el-input
+                v-model="userParams.password"
+                placeholder="请输入用户密码"
+                type="password"
+              ></el-input>
             </el-form-item>
           </el-form>
         </div>
       </template>
       <template #footer>
         <div style="flex: auto">
-          <el-button type="primary">保存</el-button>
+          <el-button type="primary" @click="save">确定</el-button>
           <el-button @click="drawer = false">取消</el-button>
         </div>
       </template>
@@ -122,8 +132,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import { reqUserInfo } from '@/api/acl/user'
+import { ref, onMounted, reactive } from 'vue'
+import { reqUserInfo, reqAddOrUpdateUser } from '@/api/acl/user'
 import type { UserResponseData, Records, User } from '@/api/acl/user/type' //引入用户信息类型
 import { ElMessage } from 'element-plus'
 
@@ -135,6 +145,12 @@ const pageSize = ref<number>(5)
 const total = ref<number>(0)
 //用户信息数组
 const userArr = ref<Records>([])
+//收集用户信息
+const userParams = reactive<User>({
+  username: '',
+  name: '',
+  password: ''
+})
 //获取已有的用户信息
 const getHasUser = async (pager = 1) => {
   pageNo.value = pager
@@ -156,11 +172,28 @@ const drawer = ref<boolean>(false)
 //添加用户
 const addUser = () => {
   drawer.value = true
+  //清空收集用户信息
+  Object.assign(userParams, {
+    username: '',
+    name: '',
+    password: '',
+    id: null //如果用户id存在，说明是更新用户信息，否则是添加用户信息
+  })
 }
 //更新用户
 const updateUser = (row: User) => {
   drawer.value = true
-  console.log(row)
+}
+//保存用户信息
+const save = async () => {
+  const res = await reqAddOrUpdateUser(userParams)
+  if (res.code === 200) {
+    ElMessage.success(userParams.id ? '更新用户信息成功' : '添加用户信息成功')
+    getHasUser()
+  } else {
+    ElMessage.error(userParams.id ? '更新用户信息失败' : '添加用户信息失败')
+  }
+  drawer.value = false
 }
 //#endregion
 </script>
