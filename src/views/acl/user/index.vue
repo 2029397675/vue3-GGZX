@@ -94,7 +94,7 @@
     <!-- 抽屉结构用于添加新的用户|更改用户信息 -->
     <el-drawer v-model="drawer">
       <template #header>
-        <h4>添加用户</h4>
+        <h4>{{ userParams.id ? '更新用户' : '添加用户' }}</h4>
       </template>
       <template #default>
         <div>
@@ -111,7 +111,11 @@
                 placeholder="请输入用户昵称"
               ></el-input>
             </el-form-item>
-            <el-form-item label="用户密码" prop="password">
+            <el-form-item
+              v-if="!userParams.id"
+              label="用户密码"
+              prop="password"
+            >
               <el-input
                 v-model="userParams.password"
                 placeholder="请输入用户密码"
@@ -189,6 +193,10 @@ const addUser = () => {
 //更新用户
 const updateUser = (row: User) => {
   drawer.value = true
+  Object.assign(userParams, row)
+  nextTick(() => {
+    formRef.value.resetFields() //清空表单验证信息
+  })
 }
 //保存用户信息
 const save = async () => {
@@ -196,11 +204,13 @@ const save = async () => {
   const res = await reqAddOrUpdateUser(userParams)
   if (res.code === 200) {
     ElMessage.success(userParams.id ? '更新用户信息成功' : '添加用户信息成功')
-    getHasUser()
   } else {
     ElMessage.error(userParams.id ? '更新用户信息失败' : '添加用户信息失败')
   }
+  getHasUser(userParams.id ? pageNo.value : 1)
   drawer.value = false
+  //浏览器重新加载
+  window.location.reload()
 }
 //表单验证规则
 const validatorUsername = (rule: any, value: any, callback: any) => {
