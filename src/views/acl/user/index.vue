@@ -57,6 +57,7 @@
               icon="User"
               size="small"
               type="primary"
+              @click="setRole(row)"
             >
               分配角色
             </el-button>
@@ -132,13 +133,72 @@
         </div>
       </template>
     </el-drawer>
+    <!-- 用于分配账号职位的抽屉结构 -->
+    <el-drawer v-model="drawer1">
+      <template #header>
+        <h4>分配角色职位</h4>
+      </template>
+      <template #default>
+        <div>
+          <el-form>
+            <el-form-item label="用户姓名">
+              <el-input
+                v-model="userParams.username"
+                :disabled="true"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="职位列表">
+              <el-checkbox
+                v-model="checkAll"
+                :indeterminate="isIndeterminate"
+                @change="handleCheckAllChange"
+              >
+                全选
+              </el-checkbox>
+              <!-- 显示职位的复选框 -->
+              <el-checkbox-group
+                v-model="userRole as string[]"
+                @change="handleCheckedCitiesChange"
+              >
+                <el-checkbox
+                  v-for="item in allRole"
+                  :key="item.id"
+                  :label="item"
+                  :value="item"
+                >
+                  {{ item.roleName }}
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
+      <template #footer>
+        <div style="flex: auto">
+          <el-button type="primary" @click="confirmClick">确认</el-button>
+          <el-button @click="drawer1 = false">取消</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, reactive, nextTick } from 'vue'
-import { reqUserInfo, reqAddOrUpdateUser } from '@/api/acl/user'
-import type { UserResponseData, Records, User } from '@/api/acl/user/type' //引入用户信息类型
+import {
+  reqUserInfo,
+  reqAddOrUpdateUser,
+  reaAllRole,
+  reqSetUserRole
+} from '@/api/acl/user'
+import type {
+  UserResponseData,
+  Records,
+  User,
+  AllRoleResponseData,
+  AllRole,
+  SetRoleData
+} from '@/api/acl/user/type' //引入用户信息类型
 import { ElMessage } from 'element-plus'
 
 //默认页码
@@ -173,29 +233,30 @@ onMounted(() => {
 //#region 抽屉结构
 //控制抽屉显示与隐藏
 const drawer = ref<boolean>(false)
+//控制抽屉1显示与隐藏
+const drawer1 = ref<boolean>(false)
 //form组件
 const formRef = ref<any>(null)
 //添加用户
 const addUser = () => {
   nextTick(() => {
     formRef.value.resetFields() //清空表单验证信息
+    //清空收集用户信息
+    Object.assign(userParams, {
+      username: '',
+      name: '',
+      password: '',
+      id: null //如果用户id存在，说明是更新用户信息，否则是添加用户信息
+    })
   })
   drawer.value = true
-
-  //清空收集用户信息
-  Object.assign(userParams, {
-    username: '',
-    name: '',
-    password: '',
-    id: null //如果用户id存在，说明是更新用户信息，否则是添加用户信息
-  })
 }
 //更新用户
 const updateUser = (row: User) => {
   drawer.value = true
-  Object.assign(userParams, row)
   nextTick(() => {
     formRef.value.resetFields() //清空表单验证信息
+    Object.assign(userParams, row)
   })
 }
 //保存用户信息
@@ -237,6 +298,7 @@ const validatorPassword = (rule: any, value: any, callback: any) => {
     callback()
   }
 }
+//用户名验证规则
 const rules = {
   username: [
     {
@@ -260,8 +322,53 @@ const rules = {
     }
   ]
 }
-//用户名验证规则
-
+//存储全部职位
+const allRole = ref<AllRole>([])
+//用户已有的职位
+const userRole = ref<AllRole>([])
+//分配角色
+const setRole = async (row: User) => {
+  //存储用户信息
+  Object.assign(userParams, row)
+  //获取用户职位信息以及职位列表
+  const res: AllRoleResponseData = await reaAllRole(row.id as number)
+  if (res.code === 200) {
+    allRole.value = res.data.allRolesList
+    userRole.value = res.data.assignRoles
+    drawer1.value = true
+  }
+}
+//全选复选框
+const checkAll = ref<boolean>(false)
+//职位列表是否全选
+const isIndeterminate = ref<boolean>(false)
+//全选复选框改变事件
+const handleCheckAllChange = (val: any) => {
+  userRole.value = val ? allRole.value : []
+  isIndeterminate.value = false
+}
+//职位列表复选框改变事件
+const handleCheckedCitiesChange = (value: any) => {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === allRole.value.length
+  isIndeterminate.value =
+    checkedCount > 0 && checkedCount < allRole.value.length
+}
+//确认分配角色
+const confirmClick = async () => {
+  let data: SetRoleData = {
+    userId: userParams.id as number,
+    roleIdList: userRole.value.map(item => item.id) as number[]
+  }
+  const res = await reqSetUserRole(data)
+  if (res.code === 200) {
+    ElMessage.success('分配角色成功')
+  } else {
+    ElMessage.error('分配角色失败')
+  }
+  drawer1.value = false
+  getHasUser() //重新获取用户信息
+}
 //#endregion
 </script>
 

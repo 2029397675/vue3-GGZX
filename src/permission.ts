@@ -7,7 +7,7 @@ import 'nprogress/nprogress.css'
 import useUserStore from './store/modules/user'
 
 //全局前置守卫
-router.beforeEach(async (to, from) => {
+router.beforeEach(async to => {
   document.title = '硅谷甄选-' + to.meta.title //设置页面标题
   NProgress.start() //进度条开始
   //判断用户是否登录
