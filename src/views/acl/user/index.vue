@@ -3,19 +3,36 @@
     <el-card>
       <el-form :inline="true">
         <el-form-item label="用户名：">
-          <el-input placeholder="请输入用户名"></el-input>
+          <el-input v-model="keyword" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
-          <el-button type="default">重置</el-button>
+          <el-button
+            type="primary"
+            :disabled="keyword ? false : true"
+            @click="search"
+          >
+            搜索
+          </el-button>
+          <el-button type="default" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card style="margin: 10px 0">
       <el-button type="primary" @click="addUser">添加用户</el-button>
-      <el-button type="danger">批量删除</el-button>
+      <el-button
+        type="danger"
+        :disabled="selecteIdArr.length < 1"
+        @click="deleteSelectUser"
+      >
+        批量删除
+      </el-button>
       <!-- 表格展示用户信息 -->
-      <el-table style="margin: 10px 0" border :data="userArr">
+      <el-table
+        style="margin: 10px 0"
+        border
+        :data="userArr"
+        @selection-change="seleteChange"
+      >
         <el-table-column align="center" type="selection"></el-table-column>
         <el-table-column
           align="center"
@@ -53,7 +70,7 @@
         <el-table-column align="center" label="操作" width="260px">
           <template #default="{ row }">
             <el-button
-              style="width: 80px"
+              style="width: 80px; margin-bottom: 5px"
               icon="User"
               size="small"
               type="primary"
@@ -62,7 +79,7 @@
               分配角色
             </el-button>
             <el-button
-              style="width: 80px"
+              style="width: 80px; margin-bottom: 5px"
               icon="Edit"
               size="small"
               type="info"
@@ -70,14 +87,22 @@
             >
               编辑
             </el-button>
-            <el-button
-              style="width: 80px"
-              icon="Delete"
-              size="small"
-              type="danger"
+            <el-popconfirm
+              width="260px"
+              :title="`你确定要删除${row.username}吗？`"
+              @confirm="deleteUser(row.id)"
             >
-              删除
-            </el-button>
+              <template #reference>
+                <el-button
+                  style="width: 80px; margin-bottom: 5px"
+                  icon="Delete"
+                  size="small"
+                  type="danger"
+                >
+                  删除
+                </el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -189,7 +214,9 @@ import {
   reqUserInfo,
   reqAddOrUpdateUser,
   reaAllRole,
-  reqSetUserRole
+  reqSetUserRole,
+  reqRemoveUser,
+  reqRemoveUserList
 } from '@/api/acl/user'
 import type {
   UserResponseData,
@@ -215,10 +242,16 @@ const userParams = reactive<User>({
   name: '',
   password: ''
 })
+//收集用户输入的关键字
+const keyword = ref<string>('')
 //获取已有的用户信息
 const getHasUser = async (pager = 1) => {
   pageNo.value = pager
-  const res: UserResponseData = await reqUserInfo(pageNo.value, pageSize.value)
+  const res: UserResponseData = await reqUserInfo(
+    pageNo.value,
+    pageSize.value,
+    keyword.value
+  )
   if (res.code === 200) {
     userArr.value = res.data.records
     total.value = res.data.total
@@ -230,6 +263,19 @@ const getHasUser = async (pager = 1) => {
 onMounted(() => {
   getHasUser()
 })
+//搜索用户信息
+const search = () => {
+  getHasUser()
+  keyword.value = ''
+}
+import useLayoutSettingStore from '@/store/modules/setting'
+const layoutSettingStore = useLayoutSettingStore()
+//重置
+const reset = () => {
+  layoutSettingStore.refresh = !layoutSettingStore.refresh
+  keyword.value = ''
+  getHasUser() //重新获取用户信息
+}
 //#region 抽屉结构
 //控制抽屉显示与隐藏
 const drawer = ref<boolean>(false)
@@ -342,6 +388,8 @@ const setRole = async (row: User) => {
 const checkAll = ref<boolean>(false)
 //职位列表是否全选
 const isIndeterminate = ref<boolean>(false)
+//删除选择用户的数组
+const selecteIdArr = ref<User[]>([])
 //全选复选框改变事件
 const handleCheckAllChange = (val: any) => {
   userRole.value = val ? allRole.value : []
@@ -367,6 +415,31 @@ const confirmClick = async () => {
     ElMessage.error('分配角色失败')
   }
   drawer1.value = false
+  getHasUser() //重新获取用户信息
+}
+//删除单个用户
+const deleteUser = async (id: number) => {
+  const res = await reqRemoveUser(id)
+  if (res.code === 200) {
+    ElMessage.success('删除用户成功')
+  } else {
+    ElMessage.error('删除用户失败')
+  }
+  getHasUser() //重新获取用户信息
+}
+//选择删除多个用户
+const seleteChange = (value: any) => {
+  selecteIdArr.value = value
+}
+//删除多个用户
+const deleteSelectUser = async () => {
+  let idList: number[] = selecteIdArr.value.map(item => item.id) as number[]
+  const res = await reqRemoveUserList(idList)
+  if (res.code === 200) {
+    ElMessage.success('批量删除用户成功')
+  } else {
+    ElMessage.error('批量删除用户失败')
+  }
   getHasUser() //重新获取用户信息
 }
 //#endregion
