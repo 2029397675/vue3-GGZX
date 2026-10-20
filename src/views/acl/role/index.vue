@@ -21,7 +21,9 @@
       </el-form>
     </el-card>
     <el-card style="margin-top: 10px">
-      <el-button type="primary" icon="Plus">添加角色</el-button>
+      <el-button type="primary" icon="Plus" @click="addRole">
+        添加角色
+      </el-button>
       <el-table :data="allRole" border style="margin: 10px 0">
         <el-table-column
           type="index"
@@ -52,7 +54,14 @@
             <el-button type="primary" size="small" icon="User">
               分配权限
             </el-button>
-            <el-button type="warning" size="small" icon="Edit">编辑</el-button>
+            <el-button
+              type="warning"
+              size="small"
+              icon="Edit"
+              @click="updateRole(row)"
+            >
+              编辑
+            </el-button>
             <el-button type="danger" size="small" icon="Delete">删除</el-button>
           </template>
         </el-table-column>
@@ -68,13 +77,27 @@
         @change="getHasRole"
       />
     </el-card>
+    <!-- 添加与更新职位的对话框结构 -->
+    <el-dialog v-model="dialogVisible" title="添加职位">
+      <el-form>
+        <el-form-item label="职位名称">
+          <el-input v-model="roleName" placeholder="请输入职位名称"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary">确定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { reqAllRoleList } from '@/api/acl/role'
-import type { RoleResponseData, Records } from '@/api/acl/role/type'
+import type { RoleResponseData, Records, RoleData } from '@/api/acl/role/type'
 
 import useLayoutSettingStore from '@/store/modules/setting'
 const settingStore = useLayoutSettingStore()
@@ -111,6 +134,16 @@ const reset = () => {
   settingStore.refresh = !settingStore.refresh
 }
 //#endregion
+//#region 主体卡片
+//添加职位
+const addRole = () => {
+  dialogVisible.value = true
+}
+//更新职位
+const updateRole = (row: RoleData) => {
+  dialogVisible.value = true
+}
+//#endregion
 
 //#region 分页器
 //当前页码
@@ -120,6 +153,11 @@ const pageSize = ref<number>(10)
 //总个数
 const total = ref<number>(0)
 
+//#endregion
+
+//region 添加与更新职位的对话框
+//对话框显示与隐藏
+const dialogVisible = ref<boolean>(false)
 //#endregion
 </script>
 
