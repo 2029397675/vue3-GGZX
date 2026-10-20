@@ -78,16 +78,22 @@
       />
     </el-card>
     <!-- 添加与更新职位的对话框结构 -->
-    <el-dialog v-model="dialogVisible" title="添加职位">
-      <el-form>
-        <el-form-item label="职位名称">
-          <el-input v-model="roleName" placeholder="请输入职位名称"></el-input>
+    <el-dialog
+      v-model="dialogVisible"
+      :title="roleParams.id ? '更新职位' : '添加职位'"
+    >
+      <el-form ref="form" :model="roleParams" :rules="rules">
+        <el-form-item label="职位名称" prop="roleName">
+          <el-input
+            v-model="roleParams.roleName"
+            placeholder="请输入职位名称"
+          ></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary">确定</el-button>
+          <el-button type="primary" @click="save">确定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -95,11 +101,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import { reqAllRoleList } from '@/api/acl/role'
+import { ref, onMounted, reactive, nextTick } from 'vue'
+import { reqAllRoleList, reqAddOrUpdateRole } from '@/api/acl/role'
 import type { RoleResponseData, Records, RoleData } from '@/api/acl/role/type'
 
 import useLayoutSettingStore from '@/store/modules/setting'
+import { ElMessage } from 'element-plus'
 const settingStore = useLayoutSettingStore()
 
 //#region 搜索卡片
@@ -138,10 +145,19 @@ const reset = () => {
 //添加职位
 const addRole = () => {
   dialogVisible.value = true
+  roleParams.roleName = '' //清空角色名称
+  roleParams.id = undefined //清空ID
+  nextTick(() => {
+    form.value.resetFields()
+  }) //清空表单验证信息
 }
 //更新职位
 const updateRole = (row: RoleData) => {
   dialogVisible.value = true
+  Object.assign(roleParams, row)
+  nextTick(() => {
+    form.value.resetFields()
+  })
 }
 //#endregion
 
@@ -156,8 +172,40 @@ const total = ref<number>(0)
 //#endregion
 
 //region 添加与更新职位的对话框
+//form组件
+const form = ref()
 //对话框显示与隐藏
 const dialogVisible = ref<boolean>(false)
+//收集角色名称
+const roleParams = reactive<RoleData>({
+  roleName: '' //角色名称
+})
+//角色名称验证
+const validatorRoleName = (rule: any, value: any, callback: any) => {
+  if (value.trim().length < 2) {
+    callback(new Error('职位名称不能少于2个字符'))
+  } else {
+    callback()
+  }
+}
+//表单验证规则
+const rules = reactive({
+  roleName: [{ required: true, trigger: 'blur', validator: validatorRoleName }]
+})
+//确定按钮
+const save = async () => {
+  await form.value.validate()
+  //添加职位 | 更新职位
+  const res = await reqAddOrUpdateRole(roleParams)
+  if (res.code === 200) {
+    dialogVisible.value = false
+    getHasRole(roleParams.id ? pageNo.value : 1)
+    ElMessage.warning(roleParams.id ? '更新职位成功' : '添加职位成功')
+    dialogVisible.value = false
+  } else {
+    ElMessage.warning(roleParams.id ? '更新职位失败' : '添加职位失败')
+  }
+}
 //#endregion
 </script>
 
