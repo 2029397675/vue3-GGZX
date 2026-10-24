@@ -51,7 +51,12 @@
         ></el-table-column>
         <el-table-column align="center" label="操作" width="280">
           <template #default="{ row }">
-            <el-button type="primary" size="small" icon="User">
+            <el-button
+              type="primary"
+              size="small"
+              icon="User"
+              @click="setPermission(row)"
+            >
               分配权限
             </el-button>
             <el-button
@@ -97,13 +102,51 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 分配用户权限的结构 -->
+    <el-drawer v-model="drawer">
+      <template #header>
+        <h4>分配权限</h4>
+      </template>
+      <template #default>
+        <!-- 树形控件 -->
+        <div>
+          <el-tree
+            ref="tree"
+            style="max-width: 600px"
+            :data="menuArr"
+            show-checkbox
+            node-key="id"
+            default-expand-all
+            :default-checked-keys="selectArr"
+            :props="defaultProps"
+          />
+        </div>
+      </template>
+      <template #footer>
+        <div style="flex: auto">
+          <el-button @click="drawer = false">取消</el-button>
+          <el-button type="primary" @click="handler">确定</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, onMounted, reactive, nextTick } from 'vue'
-import { reqAllRoleList, reqAddOrUpdateRole } from '@/api/acl/role'
-import type { RoleResponseData, Records, RoleData } from '@/api/acl/role/type'
+import {
+  reqAllRoleList,
+  reqAddOrUpdateRole,
+  reqAllMenuList,
+  reqSetPermission
+} from '@/api/acl/role'
+import type {
+  RoleResponseData,
+  Records,
+  RoleData,
+  MenuResponseData,
+  MenuList
+} from '@/api/acl/role/type'
 
 import useLayoutSettingStore from '@/store/modules/setting'
 import { ElMessage } from 'element-plus'
@@ -171,7 +214,7 @@ const total = ref<number>(0)
 
 //#endregion
 
-//region 添加与更新职位的对话框
+//#region 添加与更新职位的对话框
 //form组件
 const form = ref()
 //对话框显示与隐藏
@@ -204,6 +247,65 @@ const save = async () => {
     dialogVisible.value = false
   } else {
     ElMessage.warning(roleParams.id ? '更新职位失败' : '添加职位失败')
+  }
+}
+//分配用户权限
+const setPermission = async (row: RoleData) => {
+  drawer.value = true
+  //收集当前要分配权限的职位的数据
+  Object.assign(roleParams, row)
+  const res: MenuResponseData = await reqAllMenuList(roleParams.id as number)
+  if (res.code === 200) {
+    menuArr.value = res.data
+    selectArr.value = filterSelectArr(menuArr.value, [])
+  }
+}
+//#endregion
+//#region 分配用户权限
+//树形控件
+const tree = ref<any>() //树形控件的实例
+//控制抽屉的显示与隐藏
+const drawer = ref<boolean>(false)
+//存储用户权限的数据
+const menuArr = ref<MenuList>([])
+//存储勾选节点的id（四级）
+const selectArr = ref<number[]>([])
+//默认树形控件的属性
+const defaultProps = {
+  children: 'children',
+  label: 'name'
+}
+//过滤勾选节点的id（四级）的函数
+const filterSelectArr = (allData: any, initArr: any) => {
+  allData.forEach((item: any) => {
+    if (item.select && item.level == 4) {
+      initArr.push(item.id)
+    }
+    if (item.children && item.children.length > 0) {
+      filterSelectArr(item.children, initArr)
+    }
+  })
+  return initArr
+}
+//确定按钮
+const handler = async () => {
+  //职位的id
+  const roleId = roleParams.id as number
+  //选中节点的id
+  const arr1 = tree.value.getCheckedKeys()
+  //半选节点的id
+  const arr2 = tree.value.getHalfCheckedKeys()
+  //将半选节点的id添加到选中节点的id的数组中
+  const arr = arr1.concat(arr2)
+  //下发权限
+  const res = await reqSetPermission(roleId, arr)
+  if (res.code === 200) {
+    ElMessage.warning('分配权限成功')
+    drawer.value = false
+    window.location.reload() //刷新职位列表
+  } else {
+    ElMessage.warning('分配权限失败')
+    drawer.value = false
   }
 }
 //#endregion
