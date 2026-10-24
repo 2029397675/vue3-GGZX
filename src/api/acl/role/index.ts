@@ -12,7 +12,9 @@ const API = {
   //全部菜单与按钮的数据
   ALLPERMISSION_URL: '/admin/acl/permission/toAssign/',
   //给角色分配权限
-  SETPERMISSION_URL: '/admin/acl/permission/doAssign' //给角色分配权限
+  SETPERMISSION_URL: '/admin/acl/permission/doAssign', //给角色分配权限
+  //删除职位
+  REMOVEROLE_URL: '/admin/acl/role/remove/'
 }
 //获取全部职位
 export const reqAllRoleList = (page: number, limit: number, roleName: string) =>
@@ -35,3 +37,6 @@ export const reqSetPermission = (roleId: number, permissionId: number[]) =>
   request.post<any, any>(
     API.SETPERMISSION_URL + `?roleId=${roleId}&permissionId=${permissionId}`
   )
+//删除职位
+export const reqRemoveRole = (id: number) =>
+  request.delete<any, any>(API.REMOVEROLE_URL + id)

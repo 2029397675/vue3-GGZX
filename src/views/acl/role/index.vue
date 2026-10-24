@@ -67,7 +67,17 @@
             >
               编辑
             </el-button>
-            <el-button type="danger" size="small" icon="Delete">删除</el-button>
+            <el-popconfirm
+              width="260px"
+              :title="`你确定要删除${row.roleName}职位吗？`"
+              @confirm="removeRole(row.id)"
+            >
+              <template #reference>
+                <el-button type="danger" size="small" icon="Delete">
+                  删除
+                </el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -138,7 +148,8 @@ import {
   reqAllRoleList,
   reqAddOrUpdateRole,
   reqAllMenuList,
-  reqSetPermission
+  reqSetPermission,
+  reqRemoveRole
 } from '@/api/acl/role'
 import type {
   RoleResponseData,
@@ -150,6 +161,7 @@ import type {
 
 import useLayoutSettingStore from '@/store/modules/setting'
 import { ElMessage } from 'element-plus'
+import { remove } from 'nprogress'
 const settingStore = useLayoutSettingStore()
 
 //#region 搜索卡片
@@ -306,6 +318,16 @@ const handler = async () => {
   } else {
     ElMessage.warning('分配权限失败')
     drawer.value = false
+  }
+}
+//删除已有的角色
+const removeRole = async (id: number) => {
+  const res = await reqRemoveRole(id)
+  if (res.code === 200) {
+    ElMessage.warning('删除职位成功')
+    getHasRole(pageNo.value)
+  } else {
+    ElMessage.warning('删除职位失败')
   }
 }
 //#endregion
