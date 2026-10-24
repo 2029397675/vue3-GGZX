@@ -15,6 +15,7 @@
             type="primary"
             size="small"
             :disabled="row.level == 4 ? true : false"
+            @click="addPermission"
           >
             {{ row.level == 3 ? '添加功能' : '添加菜单' }}
           </el-button>
@@ -22,6 +23,7 @@
             type="warning"
             size="small"
             :disabled="row.level == 1 ? true : false"
+            @click="updatePermission(row)"
           >
             编辑
           </el-button>
@@ -35,6 +37,25 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 对话框组件 -->
+    <el-dialog v-model="dialogVisible" title="添加菜单" width="500">
+      <el-form>
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入名称"></el-input>
+        </el-form-item>
+        <el-form-item label="权限值" prop="name">
+          <el-input v-model="form.name" placeholder="请输入权限值"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -42,6 +63,7 @@
 import { ref, onMounted } from 'vue'
 import { reqAllPermission } from '@/api/acl/menu'
 import type {
+  Permission,
   PermissionList,
   PermissionResponseData
 } from '@/api/acl/menu/type'
@@ -59,6 +81,19 @@ const getHasPermission = async () => {
     permissionArr.value = res.data
   }
 }
+//添加菜单
+const addPermission = () => {
+  dialogVisible.value = true
+}
+//编辑菜单
+const updatePermission = (row: Permission) => {
+  dialogVisible.value = true
+}
+
+//#region 对话框
+//控制对话框显示
+const dialogVisible = ref<boolean>(false)
+//#endregion
 </script>
 
 <style lang="scss" scoped></style>
