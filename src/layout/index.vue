@@ -82,7 +82,7 @@ const layoutSettingStore = useLayoutSettingStore()
     left: $base-menu-width;
     width: calc(100% - $base-menu-width);
     height: $base-tabbar-height;
-    background-color: $base-tabbar-bgcolor;
+    // background-color: $base-tabbar-bgcolor;
     transition: all 0.3s ease; // 顶部导航栏折叠动画
     &.fold {
       width: calc(100% - $base-menu-min-width);

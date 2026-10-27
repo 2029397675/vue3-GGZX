@@ -9,6 +9,8 @@ import router from './router'
 import pinia from './store'
 //svg插件
 import 'virtual:svg-icons-register'
+//引入暗黑模式
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 const app = createApp(App)
 
