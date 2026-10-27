@@ -23,6 +23,9 @@ importers:
       mockjs:
         specifier: ^1.1.0
         version: 1.1.0
+      moment:
+        specifier: ^2.31.0
+        version: 2.31.0
       nprogress:
         specifier: ^0.2.0
         version: 0.2.0
@@ -2537,6 +2540,9 @@ packages:
   mockjs@1.1.0:
     resolution: {integrity: sha512-eQsKcWzIaZzEZ07NuEyO4Nw65g0hdWAyurVol1IPl1gahRwY+svqzfgfey8U8dahLwG44d6/RwEzuK52rSa/JQ==}
     hasBin: true
+
+  moment@2.31.0:
+    resolution: {integrity: sha512-0acOTfMiWOheYS4eoWb80yYMb/JLvVv9SHbs2PehaDzfUG0Bw855SKyk0IKTnPGa5+U2bmi3W68l1+sGLX/pvw==}
 
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -6005,6 +6011,8 @@ snapshots:
   mockjs@1.1.0:
     dependencies:
       commander: 7.2.0
+
+  moment@2.31.0: {}
 
   ms@2.0.0: {}
 
