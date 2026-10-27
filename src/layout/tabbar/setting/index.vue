@@ -10,6 +10,7 @@
           show-alpha
           :predefine="predefineColors"
           style="margin-left: 5px"
+          @change="setColor"
         />
       </el-form-item>
       <el-form-item label="暗黑模式">
@@ -109,6 +110,11 @@ const changeDark = () => {
   } else {
     html.className = ''
   }
+}
+//主题颜色切换
+const setColor = () => {
+  let el = document.documentElement
+  el.style.setProperty('--el-color-primary', color.value)
 }
 </script>
 
