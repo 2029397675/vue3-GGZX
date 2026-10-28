@@ -4,7 +4,11 @@
     <div ref="screen" class="screen">
       <div class="top"><Top></Top></div>
       <div class="bottom">
-        <div class="left">左侧</div>
+        <div class="left">
+          <Tourist class="tourist"></Tourist>
+          <Sex class="sex"></Sex>
+          <Age class="age"></Age>
+        </div>
         <div class="center">中间</div>
         <div class="right">右侧</div>
       </div>
@@ -16,6 +20,9 @@
 //引入顶部子组件
 import Top from './components/Top/index.vue' // 引入顶部子组件
 //引入左侧子组件
+import Tourist from './components/Tourist/index.vue' // 引入左侧子组件
+import Age from './components/Age/index.vue' // 引入左侧子组件
+import Sex from './components/Sex/index.vue' // 引入左侧子组件
 
 import { ref, onMounted, nextTick } from 'vue'
 
@@ -47,7 +54,6 @@ window.onresize = () => {
     position: fixed;
     width: 1920px;
     height: 1080px;
-
     left: 50%;
     top: 50%;
     transform-origin: left top;
@@ -60,6 +66,18 @@ window.onresize = () => {
       display: flex;
       .left {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 1038px;
+        .tourist {
+          flex: 1.2;
+        }
+        .age {
+          flex: 1;
+        }
+        .sex {
+          flex: 1;
+        }
       }
       .center {
         flex: 3;
