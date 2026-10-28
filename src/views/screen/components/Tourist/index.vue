@@ -12,14 +12,54 @@
       <span v-for="(item, index) in people" :key="index">{{ item }}</span>
     </div>
     <!-- E-Charts展示图标结构 -->
-    <div class="chart"></div>
+    <div ref="charts" class="chart"></div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import * as echarts from 'echarts'
+import 'echarts-liquidfill'
 
 const people = ref<string>('216908人')
+const charts = ref<HTMLElement>()
+
+onMounted(() => {
+  // 初始化echarts实例
+  const myChart = echarts.init(charts.value)
+  // 配置图表选项
+  myChart.setOption({
+    xAxis: {},
+    yAxis: {},
+    series: [
+      {
+        type: 'liquidFill',
+        data: [0.6],
+        waveAnimation: true,
+        animationDuration: 0,
+        animationDurationUpdate: 0,
+        radius: '100%', // 设置波浪的半径
+        outline: {
+          show: true,
+          borderDistance: 8,
+          itemStyle: {
+            color: 'none',
+            borderColor: '#294D99',
+            borderWidth: 8,
+            shadowBlur: 20,
+            shadowColor: 'rgba(0, 0, 0, 0.25)'
+          }
+        }
+      }
+    ],
+    grid: {
+      left: 0,
+      right: 0,
+      bottom: 0,
+      top: 0
+    }
+  })
+})
 </script>
 
 <style lang="scss" scoped>
