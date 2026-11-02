@@ -28,37 +28,111 @@ onMounted(() => {
   // 初始化echarts实例
   const myChart = echarts.init(charts.value)
   // 配置图表选项
-  myChart.setOption({
-    xAxis: {},
-    yAxis: {},
+  const option = {
+    backgroundColor: 'transparent',
+
     series: [
       {
         type: 'liquidFill',
-        data: [0.6],
-        waveAnimation: true,
-        animationDuration: 0,
-        animationDurationUpdate: 0,
-        radius: '100%', // 设置波浪的半径
+        data: [0.65, 0.63],
+
+        radius: '78%',
+        center: ['50%', '48%'],
+
         outline: {
+          show: false
+        },
+
+        backgroundStyle: {
+          color: '#082746',
+          borderWidth: 0,
+          shadowBlur: 22,
+          shadowColor: '#00e5dc'
+        },
+
+        color: [
+          {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: '#20f0bd' },
+              { offset: 1, color: '#19a9d3' }
+            ]
+          },
+          '#0cc9cf'
+        ],
+
+        amplitude: 8,
+        waveLength: '70%',
+        phase: 0,
+        period: 2500,
+
+        itemStyle: {
+          opacity: 0.88,
+          shadowBlur: 10,
+          shadowColor: '#00e5d9'
+        },
+
+        label: {
           show: true,
-          borderDistance: 8,
-          itemStyle: {
-            color: 'none',
-            borderColor: '#294D99',
-            borderWidth: 8,
-            shadowBlur: 20,
-            shadowColor: 'rgba(0, 0, 0, 0.25)'
-          }
+          position: ['50%', '42%'],
+          color: '#ffffff',
+          fontSize: 18,
+          fontWeight: 'bold',
+          formatter: '78%'
         }
       }
     ],
-    grid: {
-      left: 0,
-      right: 0,
-      bottom: 0,
-      top: 0
-    }
-  })
+
+    // 外围装饰圆弧
+    graphic: [
+      {
+        type: 'arc',
+        silent: true,
+        z: 10,
+        shape: {
+          cx: '50%',
+          cy: '48%',
+          r: '44%',
+          startAngle: Math.PI,
+          endAngle: Math.PI * 2,
+          clockwise: true
+        },
+        style: {
+          stroke: '#28d9ed',
+          lineWidth: 2,
+          lineDash: [8, 6],
+          fill: 'none',
+          opacity: 0.85
+        }
+      },
+      {
+        type: 'arc',
+        silent: true,
+        z: 10,
+        shape: {
+          cx: '50%',
+          cy: '48%',
+          r: '44%',
+          startAngle: 0,
+          endAngle: Math.PI,
+          clockwise: true
+        },
+        style: {
+          stroke: '#23d7eb',
+          lineWidth: 7,
+          fill: 'none',
+          lineCap: 'round'
+        }
+      }
+    ]
+  }
+
+  myChart.setOption(option)
+  myChart.setOption(option)
 })
 </script>
 
