@@ -32,6 +32,7 @@ router.beforeEach(async to => {
         } catch (error) {
           //token过期：获取不到用户信息
           //用户手动修改本地token，导致token失效
+          alert(error) //提示用户信息过期
           await userStore.userLogout() //清除token
           return { path: '/login', query: { redirect: to.path } }
         }
@@ -47,7 +48,7 @@ router.beforeEach(async to => {
   }
 })
 //全局后置守卫
-router.afterEach((to, from) => {
+router.afterEach(() => {
   NProgress.done() //进度条结束
 })
 

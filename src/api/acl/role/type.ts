@@ -1,5 +1,3 @@
-import type { st } from 'vue-router/dist/index-BzEKChPW.js'
-
 export interface ResponseData {
   code: number
   message: string

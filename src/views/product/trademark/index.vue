@@ -239,7 +239,7 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = response => {
   formRef.value?.clearValidate() // 清除表单校验
 }
 //品牌名称校验规则
-const validatorTmName = (rule: any, value: any, callback: any) => {
+const validatorTmName = (value: any, callback: any) => {
   //自定义校验规则
   if (value.trim().length > 2) {
     callback()
@@ -248,7 +248,7 @@ const validatorTmName = (rule: any, value: any, callback: any) => {
   }
 }
 //品牌LOGO校验规则
-const validatorLogoUrl = (rule: any, value: any, callback: any) => {
+const validatorLogoUrl = (value: any, callback: any) => {
   if (value) {
     callback()
   } else {

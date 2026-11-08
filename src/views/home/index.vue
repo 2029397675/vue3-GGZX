@@ -16,7 +16,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
 import { getTime } from '@/utils/time'
 import useUserStore from '@/store/modules/user'
 

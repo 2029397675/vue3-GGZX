@@ -79,7 +79,7 @@
         ></el-table-column>
         <el-table-column label="属性名" prop="saleAttrName"></el-table-column>
         <el-table-column label="属性值">
-          <template #default="{ row, $index }">
+          <template #default="{ row }">
             <el-tag
               v-for="(tag, index) in row.spuSaleAttrValueList"
               :key="tag.id"
@@ -109,7 +109,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120px">
-          <template #default="{ row, $index }">
+          <template #default="{ $index }">
             <el-button
               type="danger"
               size="small"
@@ -149,6 +149,7 @@ import type {
   HasSaleAttr,
   SaleAttrValue
 } from '@/api/product/spu/type'
+
 //父组件的自定义事件
 const emit = defineEmits(['changeScene'])
 // #region 更新已有的SPU
@@ -206,7 +207,7 @@ const handlePictureCardPreview = (file: any) => {
   dialogVisible.value = true
 }
 //照片墙点击删除按钮事件
-const handleRemove = (file: any) => {}
+const handleRemove = () => {}
 //照片墙上传图片前的事件
 const handleUpload = (file: any) => {
   if (file.type == 'image/jpeg' || file.type == 'image/png') {

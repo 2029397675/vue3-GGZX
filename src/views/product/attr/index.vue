@@ -103,7 +103,7 @@
             </template>
           </el-table-column>
           <el-table-column label="操作">
-            <template #default="{ row, $index }">
+            <template #default="{ $index }">
               <el-button type="warning">编辑</el-button>
               <el-button
                 type="danger"

@@ -154,7 +154,6 @@ import type {
   SkuResponseData
 } from '@/api/product/sku/type' //引入接口类型
 import { ElMessage } from 'element-plus'
-import { remove } from 'nprogress'
 
 //分页器当前页码
 const pageNo = ref<number>(1)

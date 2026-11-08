@@ -97,7 +97,7 @@ const login = async () => {
 }
 
 //自定义校验规则
-const validatorUserName = (rule: any, value: any, callback: any) => {
+const validatorUserName = (value: any, callback: any) => {
   //rule:为校验规则对象
   //value:为当前表单输入值
   if (value.length >= 5) {
@@ -106,7 +106,7 @@ const validatorUserName = (rule: any, value: any, callback: any) => {
     callback(new Error('用户名长度不能低于5个字符'))
   }
 }
-const validatorPassWord = (rule: any, value: any, callback: any) => {
+const validatorPassWord = (value: any, callback: any) => {
   if (value.length >= 6) {
     callback()
   } else {

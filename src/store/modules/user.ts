@@ -89,6 +89,7 @@ const useUserStore = defineStore('User', () => {
   return {
     token,
     userLogin,
+    buttons,
     menuRoutes, //返回路由
     username, //返回用户名字
     avatar, //返回用户头像

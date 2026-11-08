@@ -7,7 +7,6 @@ import type {
   AllRoleResponseData,
   SetRoleData
 } from './type'
-import { ElWatermark } from 'element-plus'
 //地址接口
 const API = {
   //获取全部已有用户账号信息

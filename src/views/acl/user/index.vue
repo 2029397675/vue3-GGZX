@@ -182,7 +182,7 @@
               </el-checkbox>
               <!-- 显示职位的复选框 -->
               <el-checkbox-group
-                v-model="userRole as string[]"
+                v-model="userRole"
                 @change="handleCheckedCitiesChange"
               >
                 <el-checkbox
@@ -226,7 +226,7 @@ import type {
   AllRole,
   SetRoleData
 } from '@/api/acl/user/type' //引入用户信息类型
-import { ElMessage } from 'element-plus'
+import { ElMessage, type CheckboxValueType } from 'element-plus'
 
 //默认页码
 const pageNo = ref<number>(1)
@@ -320,7 +320,7 @@ const save = async () => {
   window.location.reload()
 }
 //表单验证规则
-const validatorUsername = (rule: any, value: any, callback: any) => {
+const validatorUsername = (value: any, callback: any) => {
   //用户名长度验证
   if (value.trim().length < 5 || value.trim().length > 15) {
     callback(new Error('用户名长度必须在5到15个字符之间'))
@@ -328,7 +328,7 @@ const validatorUsername = (rule: any, value: any, callback: any) => {
     callback()
   }
 }
-const validatorName = (rule: any, value: any, callback: any) => {
+const validatorName = (value: any, callback: any) => {
   //用户昵称长度验证
   if (value.trim().length < 5 || value.trim().length > 15) {
     callback(new Error('用户昵称长度必须在5到15个字符之间'))
@@ -336,7 +336,7 @@ const validatorName = (rule: any, value: any, callback: any) => {
     callback()
   }
 }
-const validatorPassword = (rule: any, value: any, callback: any) => {
+const validatorPassword = (value: any, callback: any) => {
   //用户密码长度验证
   if (value.trim().length < 6 || value.trim().length > 15) {
     callback(new Error('用户密码长度必须在6到15个字符之间'))
@@ -371,28 +371,45 @@ const rules = {
 //存储全部职位
 const allRole = ref<AllRole>([])
 //用户已有的职位
-const userRole = ref<AllRole>([])
+const userRole = ref<number[]>([])
 //分配角色
+// 用户已选中的角色 ID
 const setRole = async (row: User) => {
-  //存储用户信息
+  // 存储用户信息
   Object.assign(userParams, row)
-  //获取用户职位信息以及职位列表
+
+  // 获取用户职位信息以及职位列表
   const res: AllRoleResponseData = await reaAllRole(row.id as number)
+
   if (res.code === 200) {
     allRole.value = res.data.allRolesList
+
+    // 将角色对象数组转换为角色 ID 数组
     userRole.value = res.data.assignRoles
+      .map(item => item.id)
+      .filter((id): id is number => id !== undefined)
+
     drawer1.value = true
   }
 }
-//全选复选框
+
+// 全选复选框
 const checkAll = ref<boolean>(false)
-//职位列表是否全选
+
+// 职位列表是否全选
 const isIndeterminate = ref<boolean>(false)
-//删除选择用户的数组
+
+// 删除选择用户的数组
 const selecteIdArr = ref<User[]>([])
-//全选复选框改变事件
-const handleCheckAllChange = (val: any) => {
-  userRole.value = val ? allRole.value : []
+
+// 全选复选框改变事件
+const handleCheckAllChange = (val: CheckboxValueType) => {
+  userRole.value = val
+    ? allRole.value
+        .map(item => item.id)
+        .filter((id): id is number => id !== undefined)
+    : []
+
   isIndeterminate.value = false
 }
 //职位列表复选框改变事件
@@ -406,7 +423,7 @@ const handleCheckedCitiesChange = (value: any) => {
 const confirmClick = async () => {
   let data: SetRoleData = {
     userId: userParams.id as number,
-    roleIdList: userRole.value.map(item => item.id) as number[]
+    roleIdList: userRole.value
   }
   const res = await reqSetUserRole(data)
   if (res.code === 200) {

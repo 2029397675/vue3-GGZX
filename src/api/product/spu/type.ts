@@ -11,8 +11,10 @@ export interface SpuData {
   description: string
   category3Id: number | string
   tmId: number | string
-  spuSaleAttrList: null | SpuImage[]
-  spuImageList: null | SaleAttr[]
+  // SPU销售属性列表
+  spuSaleAttrList: SaleAttr[]
+  // SPU图片列表
+  spuImageList: SpuImage[]
 }
 //数组：元素是SpuData类型
 export type Records = SpuData[]

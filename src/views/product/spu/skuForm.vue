@@ -28,13 +28,13 @@
       <el-form-item label="平台属性">
         <el-form :inline="true">
           <el-form-item
-            v-for="(item, index) in attrArr"
+            v-for="item in attrArr"
             :key="item.id"
             :label="item.attrName"
           >
             <el-select v-model="item.attrIdAndValueId" style="width: 200px">
               <el-option
-                v-for="(attrValue, index) in item.attrValueList"
+                v-for="attrValue in item.attrValueList"
                 :key="attrValue.id"
                 :label="attrValue.valueName"
                 :value="`${item.id}:${attrValue.id}`"
@@ -69,7 +69,7 @@
             align="center"
           ></el-table-column>
           <el-table-column label="图片">
-            <template #default="{ row, $index }">
+            <template #default="{ row }">
               <img
                 :src="row.imgUrl"
                 alt=""
@@ -79,7 +79,7 @@
           </el-table-column>
           <el-table-column label="名称" prop="imgName"></el-table-column>
           <el-table-column label="操作">
-            <template #default="{ row, $index }">
+            <template #default="{ row }">
               <el-button type="warning" size="small" @click="handler(row)">
                 设置默认
               </el-button>

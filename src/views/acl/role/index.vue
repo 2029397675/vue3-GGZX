@@ -161,7 +161,6 @@ import type {
 
 import useLayoutSettingStore from '@/store/modules/setting'
 import { ElMessage } from 'element-plus'
-import { remove } from 'nprogress'
 const settingStore = useLayoutSettingStore()
 
 //#region 搜索卡片
@@ -236,7 +235,7 @@ const roleParams = reactive<RoleData>({
   roleName: '' //角色名称
 })
 //角色名称验证
-const validatorRoleName = (rule: any, value: any, callback: any) => {
+const validatorRoleName = (value: any, callback: any) => {
   if (value.trim().length < 2) {
     callback(new Error('职位名称不能少于2个字符'))
   } else {
