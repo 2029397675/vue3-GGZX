@@ -25,7 +25,6 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
-import { min } from 'moment'
 
 const chart = ref<HTMLElement>()
 onMounted(() => {
@@ -48,7 +47,7 @@ onMounted(() => {
         data: [58],
         barWidth: 20, // 设置柱子的宽度
         itemStyle: {
-          color: 'rgb(8, 85, 174)', // 设置柱子的颜色
+          color: 'rgb(8, 85, 174)', // 设置柱子的颜  色
           borderRadius: 10
         },
         z: 10
@@ -78,7 +77,7 @@ onMounted(() => {
 .box1 {
   width: 100%;
   height: 100%;
-  background: url(../../images/dataScreen-main-cb.png) no-repeat;
+  background: url(../../images/dataScreen-main-lb.png) no-repeat;
   background-size: 100% 100%;
   margin: 20px 0;
   .title {

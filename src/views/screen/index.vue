@@ -9,8 +9,15 @@
           <Sex class="sex"></Sex>
           <Age class="age"></Age>
         </div>
-        <div class="center">中间</div>
-        <div class="right">右侧</div>
+        <div class="center">
+          <Map class="map"></Map>
+          <Line class="line"></Line>
+        </div>
+        <div class="right">
+          <Rank class="rank"></Rank>
+          <Year class="year"></Year>
+          <Counter class="counter"></Counter>
+        </div>
       </div>
     </div>
   </div>
@@ -23,6 +30,13 @@ import Top from './components/Top/index.vue' // 引入顶部子组件
 import Tourist from './components/Tourist/index.vue' // 引入左侧子组件
 import Age from './components/Age/index.vue' // 引入左侧子组件
 import Sex from './components/Sex/index.vue' // 引入左侧子组件
+//引入中间子组件
+import Map from './components/Map/index.vue'
+import Line from './components/Line/index.vue'
+//引入右侧子组件
+import Rank from './components/Rank/index.vue'
+import Year from './components/Year/index.vue'
+import Counter from './components/Counter/index.vue' // 引入右侧子组件
 
 import { ref, onMounted, nextTick } from 'vue'
 
@@ -81,9 +95,31 @@ window.onresize = () => {
       }
       .center {
         flex: 3;
+        display: flex;
+        flex-direction: column;
+        margin: 0 20px;
+        .map {
+          flex: 4;
+        }
+        .line {
+          flex: 1;
+        }
       }
       .right {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        .rank {
+          flex: 1.5;
+          margin-bottom: 10px;
+        }
+        .year {
+          flex: 1;
+          margin-bottom: 10px;
+        }
+        .counter {
+          flex: 1;
+        }
       }
     }
   }
