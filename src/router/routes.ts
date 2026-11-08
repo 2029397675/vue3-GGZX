@@ -44,6 +44,20 @@ export const constantRoute = [
       icon: 'DataBoard' //菜单需要的图标
     }
   },
+
+  {
+    //404页面路由
+    path: '/404',
+    name: '404',
+    component: () => import('@/views/404/index.vue'),
+    meta: {
+      title: '404', //菜单需要的标题
+      hidden: true
+    }
+  }
+]
+//异步路由
+export const asyncRoute = [
   {
     path: '/acl',
     component: () => import('@/layout/index.vue'),
@@ -140,17 +154,10 @@ export const constantRoute = [
         }
       }
     ]
-  },
-  {
-    //404页面路由
-    path: '/404',
-    name: '404',
-    component: () => import('@/views/404/index.vue'),
-    meta: {
-      title: '404', //菜单需要的标题
-      hidden: true
-    }
-  },
+  }
+]
+//任意路由
+export const anyRoute = [
   {
     //任意路径路由
     path: '/:pathMatch(.*)*', //匹配任意路径
