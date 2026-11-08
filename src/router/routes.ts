@@ -146,7 +146,7 @@ export const asyncRoute = [
       {
         path: '/product/sku',
         component: () => import('@/views/product/sku/index.vue'),
-        name: 'sku', //命名路由
+        name: 'Sku', //命名路由
         meta: {
           title: 'SKU管理', //菜单需要的标题
           hidden: false,

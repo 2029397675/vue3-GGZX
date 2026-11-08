@@ -11,9 +11,11 @@ import pinia from './store'
 import 'virtual:svg-icons-register'
 //引入暗黑模式
 import 'element-plus/theme-chalk/dark/css-vars.css'
+//引入自定义指令
+import { isHasButton } from './directive/has.ts'
 
 const app = createApp(App)
-
+isHasButton(app)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
@@ -29,5 +31,6 @@ app.use(pinia)
 app.use(router)
 //引入路由鉴权
 import '@/permission.ts'
+
 //挂载到app上
 app.mount('#app')

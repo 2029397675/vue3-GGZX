@@ -9,14 +9,29 @@ import type {
   UserInfoResponseData
 } from '@/api/user/type'
 //引入路由（常态路由）
-import { constantRoute } from '@/router/routes'
+import { constantRoute, asyncRoute, anyRoute } from '@/router/routes'
+//引入深拷贝
+import cloneDeep from 'lodash/cloneDeep'
 
 //创建用户小仓库
 import { ref } from 'vue'
+import router from '@/router'
+
 const useUserStore = defineStore('User', () => {
   //定义token（用户登录后返回的token）和userLogin（用户登录的方法）两个响应式数据
   //token：用户登录后返回的token
   const token = ref(localStorage.getItem('TOKEN') || '')
+  //过滤路由
+  const filterAsyncRoutes = (asyncRoutes: any[], routes: string[]) => {
+    return asyncRoutes.filter(item => {
+      if (routes.includes(item.name)) {
+        if (item.children && item.children.length > 0) {
+          item.children = filterAsyncRoutes(item.children, routes) //递归过滤子路由
+        }
+        return true
+      }
+    })
+  }
   //用户登陆方法
   const userLogin = async (data: loginFormData) => {
     const res: ResponseData<string> = await reqLogin(data)
@@ -32,6 +47,7 @@ const useUserStore = defineStore('User', () => {
   //获取用户信息方法
   const username = ref('') //用户名字
   const avatar = ref('') //用户头像
+  const buttons = ref<string[]>([]) //用户按钮
   const userInfo = async () => {
     //获取用户信息并存储到仓库中【用户头像、名字】
     const res: ResponseData<UserInfoResponseData> = await reqUserInfo()
@@ -39,6 +55,17 @@ const useUserStore = defineStore('User', () => {
       //将用户信息存储到仓库中【用户头像、名字】
       username.value = res.data.name
       avatar.value = res.data.avatar
+      buttons.value = res.data.buttons
+      const userAsyncRoutes = filterAsyncRoutes(
+        cloneDeep(asyncRoute) as any[],
+        res.data.routes as string[]
+      ) //过滤路由
+      //菜单的数据
+      menuRoutes.value = [...constantRoute, ...userAsyncRoutes, ...anyRoute]
+      //追加路由
+      ;[...userAsyncRoutes, ...anyRoute].forEach((route: any) => {
+        router.addRoute(route)
+      })
       return 'ok'
     } else {
       return Promise.reject(new Error(res.message)) //返回错误信息
@@ -58,7 +85,7 @@ const useUserStore = defineStore('User', () => {
     }
   }
   //定义路由
-  const menuRoutes = ref(constantRoute)
+  const menuRoutes = ref([] as any[])
   return {
     token,
     userLogin,

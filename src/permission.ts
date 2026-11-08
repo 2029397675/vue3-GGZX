@@ -18,7 +18,7 @@ router.beforeEach(async to => {
   if (token) {
     //登录成功还想要访问登录页面，禁止放行
     if (to.path === '/login') {
-      return false
+      return { path: '/home' }
     } else {
       if (username) {
         return true
@@ -28,7 +28,7 @@ router.beforeEach(async to => {
           //获取用户信息
           await userStore.userInfo()
           //获取用户信息成功，放行
-          return true
+          return { ...to }
         } catch (error) {
           //token过期：获取不到用户信息
           //用户手动修改本地token，导致token失效
